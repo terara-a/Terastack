@@ -1,0 +1,42 @@
+name: Daily standards discovery
+on:
+  schedule:
+    - cron: '23 22 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: standards-discovery
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: standards/daily
+        continue-on-error: true
+        id: pending
+      - uses: actions/checkout@v4
+        if: steps.pending.outcome == 'failure'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm test
+      - run: npm run collect
+        env:
+          CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
+          CLASSIFIER_MODEL: ${{ vars.CLASSIFIER_MODEL }}
+          CLASSIFIER_API_KEY: ${{ secrets.CLASSIFIER_API_KEY }}
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: standards/daily
+          base: main
+          title: 'Update standards catalog and daily review queue'
+          commit-message: 'Update standards catalog'
+          body: 'All-topic Internet-Draft discovery. Review relevant and uncertain documents in reports/daily. No generated protocol implementation is automatically merged.'
+          add-paths: |
+            catalog/
+            reports/daily/

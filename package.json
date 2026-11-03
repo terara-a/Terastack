@@ -1,0 +1,6 @@
+{
+  "name": "terastack", "private": true, "type": "module",
+  "engines": {"node": ">=24"},
+  "scripts": {"test": "node tests/core.test.ts", "collect": "node collector/run.ts", "dev": "wrangler dev", "deploy": "wrangler deploy"},
+  "devDependencies": {"wrangler": "4.45.0"}
+}
