@@ -222,3 +222,25 @@ test('provider failure writes failed evaluation with safe diagnostics and retain
     assert.ok(!text.includes(config.key)); assert.ok(!text.includes('Sensitive provider text'));
   } finally { await rm(root, {recursive: true}); }
 });
+
+import {modelsURL, checkModels} from '../scripts/check-models.ts';
+test('model listing uses only GET models and reports configured model availability', async () => {
+  assert.equal(modelsURL('https://api.openai.com/v1/chat/completions'), 'https://api.openai.com/v1/models');
+  assert.throws(() => modelsURL('http://example.test/chat/completions'), /HTTPS/);
+  const calls: string[] = [];
+  const fetcher = async (url: any, options: any) => {
+    calls.push(String(url)); assert.equal(options.body, undefined); assert.equal(options.method, undefined);
+    return Response.json({data: [{id: 'other-model'}, {id: 'listed-model'}, {id: 'listed-model'}]});
+  };
+  const result = await checkModels(config.url, config.key, 'gpt-4.1-nano', fetcher as typeof fetch);
+  assert.equal(result.listed, false); assert.deepEqual(result.models, ['listed-model', 'other-model']);
+  assert.equal((await checkModels(config.url, config.key, 'listed-model', fetcher as typeof fetch)).listed, true);
+  assert.ok(calls.every(url => url.endsWith('/models')));
+});
+test('model listing fails safely on missing credentials, denied access and malformed IDs', async () => {
+  await assert.rejects(checkModels(config.url, ''), /not configured/);
+  const denied = async () => Response.json({error: {code: 'insufficient_permissions', message: config.key}}, {status: 403});
+  await assert.rejects(checkModels(config.url, config.key, '', denied as typeof fetch), /403.*insufficient_permissions/);
+  const malformed = async () => Response.json({data: [{id: 'model\n::error::injected'}]});
+  await assert.rejects(checkModels(config.url, config.key, '', malformed as typeof fetch), /Invalid model/);
+});

@@ -16,6 +16,14 @@ GitHub Actions Variables に設定:
 
 Actions Secret: `CLASSIFIER_API_KEY`。キーをチャット・Git・Variablesに入れないでください。例えば OpenAI を使う場合の URL は `https://api.openai.com/v1/chat/completions` です。モデルと単価は利用時の公式料金で指定します。単価が未設定なら有料処理を開始しません。クラウド環境から実行する場合はモデルのホストへのネットワーク許可も必要です。GitHub Actions の通信設定とは別です。
 
+## モデル利用可否を GitHub Actions で調べる
+
+API キーに Models Read 権限を設定した後、「Daily standards discovery」を手動実行して mode=`models` を選択します。設定済みの `CLASSIFIER_URL` と `CLASSIFIER_API_KEY` で `GET /v1/models` を呼び、Summary とログに利用可能なモデル名と `CLASSIFIER_MODEL` の有無を表示します。ローカルPCは不要です。
+
+このモードは推論を呼ばず、カタログ変更・予算予約・更新PR作成も行いません。単価設定も不要です。`listed: false` の場合は一覧を表示した後にジョブを失敗扱いにします。Models Read が不足している場合はHTTP 403等の安全な診断だけ表示します。キーと生レスポンスは表示しません。
+
+モデル一覧にあることと、Chat Completions の利用権限・請求設定・パラメーター互換性は別です。一覧で確認できた後に `evaluate` を実行してください。ローカルで行う場合は `npm run check:models` です。
+
 ## 1. 少量評価
 
 「Daily standards discovery」を手動実行し、mode=`evaluate` を選びます。ローカルでは `npm run evaluate`。

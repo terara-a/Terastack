@@ -11,7 +11,8 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "classify": "node collector/classify.ts",
-    "evaluate": "node collector/evaluate.ts"
+    "evaluate": "node collector/evaluate.ts",
+    "check:models": "node scripts/check-models.ts"
   },
   "devDependencies": {
     "wrangler": "4.45.0"
