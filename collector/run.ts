@@ -1,7 +1,7 @@
 import {mkdir, readFile, writeFile, rename} from 'node:fs/promises';
 import {documents, overlap, revisionKey, classify} from './core.ts';
 import type {Document, Decision} from './core.ts';
-type Entry = {document: Document; decision: Decision; observedAt: string};
+type Entry = {document: Document; decision: Decision; observedAt: string; classifiedAt?: string};
 type State = {lastSuccess?: string; entries: Record<string, Entry>};
 await mkdir('catalog', {recursive: true});
 await mkdir('reports/daily', {recursive: true});
@@ -27,9 +27,10 @@ const budget = Number(process.env.CLASSIFY_LIMIT ?? 30);
 if (!Number.isInteger(budget) || budget < 0) throw new Error('Invalid CLASSIFY_LIMIT');
 if (process.env.CLASSIFIER_URL && process.env.CLASSIFIER_API_KEY && process.env.CLASSIFIER_MODEL) {
   let count = 0;
-  for (const [key, entry] of Object.entries(state.entries)) {
+  for (const [key, entry] of Object.entries(state.entries).sort((a, b) => (a[1].classifiedAt ?? '').localeCompare(b[1].classifiedAt ?? ''))) {
     if (entry.decision.relevant !== null || count >= budget) continue;
     entry.decision = await classify(entry.document, {url: process.env.CLASSIFIER_URL, key: process.env.CLASSIFIER_API_KEY, model: process.env.CLASSIFIER_MODEL});
+    entry.classifiedAt = started;
     if (!changed.includes(key)) changed.push(key);
     count++;
   }
