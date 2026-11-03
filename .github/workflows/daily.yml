@@ -3,6 +3,20 @@ on:
   schedule:
     - cron: '23 22 * * *'
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Evaluate first; daily prioritizes updates; backfill resumes initial classification'
+        type: choice
+        options: [evaluate, daily, backfill]
+        default: evaluate
+      limit:
+        description: 'Maximum documents (backfill default 500, daily default 30)'
+        type: string
+        default: ''
+      max_usd:
+        description: 'Cumulative reservation cap in USD, including past runs; blank uses repository variable or $0.10'
+        type: string
+        default: ''
 permissions:
   contents: write
   pull-requests: write
@@ -13,6 +27,15 @@ jobs:
   collect:
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    env:
+      CLASSIFY_MODE: ${{ inputs.mode || 'daily' }}
+      CLASSIFY_LIMIT: ${{ inputs.limit }}
+      CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
+      CLASSIFIER_MODEL: ${{ vars.CLASSIFIER_MODEL }}
+      CLASSIFIER_API_KEY: ${{ secrets.CLASSIFIER_API_KEY }}
+      CLASSIFIER_INPUT_USD_PER_MILLION: ${{ vars.CLASSIFIER_INPUT_USD_PER_MILLION }}
+      CLASSIFIER_OUTPUT_USD_PER_MILLION: ${{ vars.CLASSIFIER_OUTPUT_USD_PER_MILLION }}
+      CLASSIFIER_MAX_USD: ${{ inputs.max_usd || vars.CLASSIFIER_MAX_USD || '0.10' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,7 +48,7 @@ jobs:
           if git ls-remote --exit-code --heads origin standards/daily >/dev/null; then
             git fetch origin standards/daily
             if ! git merge-base --is-ancestor FETCH_HEAD HEAD; then
-              git restore --source=FETCH_HEAD -- catalog reports/daily
+              git restore --source=FETCH_HEAD -- catalog reports
             fi
           fi
       - uses: actions/setup-node@v4
@@ -36,10 +59,26 @@ jobs:
         run: |
           if test -f catalog/state.json; then node collector/migrate.ts; fi
       - run: npm run collect
-        env:
-          CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
-          CLASSIFIER_MODEL: ${{ vars.CLASSIFIER_MODEL }}
-          CLASSIFIER_API_KEY: ${{ secrets.CLASSIFIER_API_KEY }}
+        if: env.CLASSIFY_MODE == 'daily'
+      - name: Evaluate or classify
+        id: classify
+        continue-on-error: true
+        run: |
+          if test "$CLASSIFY_MODE" = evaluate; then
+            npm run evaluate
+          else
+            npm run classify
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        continue-on-error: true
+        with:
+          name: classification-checkpoint-${{ github.run_id }}
+          path: |
+            catalog/
+            reports/evaluation/
+            reports/classification/
+          if-no-files-found: ignore
       - uses: peter-evans/create-pull-request@v7
         with:
           branch: standards/daily
@@ -49,4 +88,7 @@ jobs:
           body: 'All-topic RFC and Internet-Draft discovery. Review catalog/related.json and compact daily summaries; pending decisions are retained in catalog/state.json. No generated protocol implementation is automatically merged.'
           add-paths: |
             catalog/
-            reports/daily/
+            reports/
+      - name: Report model failure after preserving budget and completed batches
+        if: steps.classify.outcome == 'failure'
+        run: exit 1
