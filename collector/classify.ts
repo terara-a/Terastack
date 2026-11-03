@@ -4,7 +4,7 @@ import type {Document} from './core.ts';
 import {encode, ingest, setDecision} from './state.ts';
 import type {State, Related} from './state.ts';
 import {configFromEnv, PROMPT_VERSION, prepare, reserve, execute, failureDetails} from './model.ts';
-import {resolveConfig} from './select-model.ts';
+import {withSelectedModel} from './select-model.ts';
 import {EVALUATION_VERSION, ensureEvaluation} from './evaluate.ts';
 import type {Ledger, Config} from './model.ts';
 export function queue(state: State, mode: string, now = Date.now()): string[] {
@@ -71,7 +71,8 @@ export async function classifyPending(root = '.', mode = 'daily', config: Config
   }
 }
 if (import.meta.url === new URL(process.argv[1], 'file:').href) {
-  const config = await resolveConfig();
-  if (config) await ensureEvaluation('.', config);
-  await classifyPending('.', process.env.CLASSIFY_MODE ?? 'daily', config);
+  await withSelectedModel(async config => {
+    if (config) await ensureEvaluation('.', config);
+    await classifyPending('.', process.env.CLASSIFY_MODE ?? 'daily', config);
+  });
 }

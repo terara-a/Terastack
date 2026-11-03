@@ -274,3 +274,20 @@ test('passed evaluation is reused only for the same model and changed model trig
     await ensureEvaluation(root, {...config, model: 'changed-model'}, fetcher as typeof fetch); assert.equal(calls, 2);
   } finally { await rm(root, {recursive: true}); }
 });
+
+import {withSelectedModel} from '../collector/select-model.ts';
+import {ClassifierError} from '../collector/model.ts';
+test('automatic fallback tries a different model only for model_not_found and skips dated siblings', async () => {
+  const env = {CLASSIFIER_URL: config.url, CLASSIFIER_API_KEY: config.key};
+  const fetcher = async () => Response.json({data: ['gpt-4.1-nano', 'gpt-4.1-nano-2025-04-14', 'gpt-4o-mini'].map(id => ({id}))});
+  const tried: string[] = [];
+  const model = await withSelectedModel(async selected => {
+    tried.push(selected!.model);
+    if (selected!.model === 'gpt-4.1-nano') throw new ClassifierError(404, {code: 'model_not_found'});
+    return selected!.model;
+  }, env, fetcher as typeof fetch);
+  assert.equal(model, 'gpt-4o-mini'); assert.deepEqual(tried, ['gpt-4.1-nano', 'gpt-4o-mini']);
+  let calls = 0;
+  await assert.rejects(withSelectedModel(async () => { calls++; throw new ClassifierError(429, {code: 'insufficient_quota'}); }, env, fetcher as typeof fetch), /429/);
+  assert.equal(calls, 1);
+});

@@ -1,4 +1,4 @@
-import {resolveConfig} from './select-model.ts';
+import {withSelectedModel} from './select-model.ts';
 import {readFile, writeFile, mkdir, rename} from 'node:fs/promises';
 import {prepare, reserve, execute, configFromEnv, PROMPT_VERSION, failureDetails} from './model.ts';
 import type {Config, Ledger} from './model.ts';
@@ -63,4 +63,4 @@ export async function evaluate(root = '.', config: Config | undefined = configFr
   console.log(JSON.stringify({status: report.status, ...measured, durationMs: report.durationMs}));
   if (!passed) throw new Error('Evaluation thresholds not met; review false negatives before bulk classification');
 }
-if (import.meta.url === new URL(process.argv[1], 'file:').href) await evaluate('.', await resolveConfig());
+if (import.meta.url === new URL(process.argv[1], 'file:').href) await withSelectedModel(config => evaluate('.', config));
