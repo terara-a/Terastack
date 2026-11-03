@@ -4,17 +4,23 @@
 
 収集 (`npm run collect`) と有料の分類 (`npm run classify`) を分離しています。モデル設定がなくても文書の全件発見は続きます。未知の名称をキーワードで除外しません。
 
-GitHub Actions Variables に設定:
+GitHub Actions Variables に `CLASSIFIER_URL`、Actions Secret に `CLASSIFIER_API_KEY` を設定します。OpenAI の場合 URL は `https://api.openai.com/v1/chat/completions`。キーには Models Read と Chat Completions Write が必要です。
 
-| 名前 | 値 |
-| --- | --- |
-| CLASSIFIER_URL | OpenAI 互換 Chat Completions の HTTPS エンドポイント |
-| CLASSIFIER_MODEL | 低価格の、JSON出力と max_tokens に対応するモデル名 |
-| CLASSIFIER_INPUT_USD_PER_MILLION | 入力100万トークン当たりのUSD単価 |
-| CLASSIFIER_OUTPUT_USD_PER_MILLION | 出力100万トークン当たりのUSD単価 |
-| CLASSIFIER_MAX_USD | 累積予約額上限。未設定なら0.10 |
+既定は自動選択です。実行のたびに GET /models を取得し、対応表に載っているモデルのうち低価格のものを選びます。既存の `CLASSIFIER_MODEL` や共通単価変数は自動選択時には使いません。現在の候補と予約計算用の単価は次です（USD / 100万トークン）。
 
-Actions Secret: `CLASSIFIER_API_KEY`。キーをチャット・Git・Variablesに入れないでください。例えば OpenAI を使う場合の URL は `https://api.openai.com/v1/chat/completions` です。モデルと単価は利用時の公式料金で指定します。単価が未設定なら有料処理を開始しません。クラウド環境から実行する場合はモデルのホストへのネットワーク許可も必要です。GitHub Actions の通信設定とは別です。
+| 候補 | 入力 | 出力 |
+| --- | --- | --- |
+| gpt-4.1-nano | 0.10 | 0.40 |
+| gpt-4o-mini | 0.15 | 0.60 |
+| gpt-4.1-mini | 0.40 | 1.60 |
+
+これらは GET /models から取得した価格ではなく、予約計算用の初期対応表です。最新料金を実行時に検証する仕組みはありません。提供元の料金変更時は対応表を更新してください。既知モデルの日付付き版にも対応し、未確認モデルや高額モデルへ無条件には切り替えません。候補がなければ理由を表示して停止します。
+
+必要なら `CLASSIFIER_MODEL_PROFILES` に `[{"id":"モデル名","inputRate":入力単価,"outputRate":出力単価}]` の形式のJSONで対応表を上書きできます。自動選択に使う単価はここでモデルごとに保持するため、別モデルの価格を誤って流用しません。
+
+`CLASSIFIER_MAX_USD` は累積予約額上限。未設定なら0.10です。固定モデルに戻す場合だけ `CLASSIFIER_SELECTION=fixed` と、`CLASSIFIER_MODEL`、`CLASSIFIER_INPUT_USD_PER_MILLION`、`CLASSIFIER_OUTPUT_USD_PER_MILLION` を設定します。固定モードでは単価未設定の有料処理は開始しません。
+
+モデル未設定でも利用可能な候補があれば選択でき、選択したモデル・単価は Actions Summary に表示します。モデルが変わった場合、分類前に少量評価を自動実行します。評価も同じ累積予算内で、合格するまで本分類を行いません。キーはチャットやGitに貼らないでください。
 
 ## モデル利用可否を GitHub Actions で調べる
 
@@ -32,7 +38,7 @@ GNAP、OAuth、JWT、ACME、RATS、無関係なRFC、未知の用語を使った
 
 `reports/evaluation/latest.json` に再現率・適合率・判断困難数・実行時間・予約額・返却されたトークン使用量を保存します。モデル未設定時はテストデータの形式だけ検証し、精度は測定していないと表示します。
 
-分類の開始条件は再現率90%以上、適合率80%以上、判断困難0件です。この12件は最低限の回帰チェックで、全48,000件の精度の保証ではありません。特に見落としと紛らわしい仕様を追加して評価セットを育てます。評価データ変更時は fixture version も更新してください。モデル・エンドポイント・プロンプト・評価セットの版が違う過去の合格結果は使えません。
+分類の開始条件は再現率90%以上、適合率80%以上、判断困難0件です。この12件は最低限の回帰チェックで、全48,000件の精度の保証ではありません。特に見落としと紛らわしい仕様を追加して評価セットを育てます。評価データ変更時は fixture version も更新してください。モデル・エンドポイント・プロンプト・評価セットの版が違う過去の合格結果は使えず、分類前に評価を自動実行します。
 
 ## 2. 初回分類を再開可能な小分けで実行
 

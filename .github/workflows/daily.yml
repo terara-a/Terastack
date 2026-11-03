@@ -30,6 +30,8 @@ jobs:
     env:
       CLASSIFY_MODE: ${{ inputs.mode || 'daily' }}
       CLASSIFY_LIMIT: ${{ inputs.limit }}
+      CLASSIFIER_SELECTION: ${{ vars.CLASSIFIER_SELECTION || 'auto' }}
+      CLASSIFIER_MODEL_PROFILES: ${{ vars.CLASSIFIER_MODEL_PROFILES }}
       CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
       CLASSIFIER_MODEL: ${{ vars.CLASSIFIER_MODEL }}
       CLASSIFIER_API_KEY: ${{ secrets.CLASSIFIER_API_KEY }}

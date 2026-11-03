@@ -244,3 +244,33 @@ test('model listing fails safely on missing credentials, denied access and malfo
   const malformed = async () => Response.json({data: [{id: 'model\n::error::injected'}]});
   await assert.rejects(checkModels(config.url, config.key, '', malformed as typeof fetch), /Invalid model/);
 });
+
+import {chooseModel, resolveConfig} from '../collector/select-model.ts';
+import {ensureEvaluation} from '../collector/evaluate.ts';
+test('auto selection chooses the cheapest supported listing and accepts only dated known variants', async () => {
+  assert.equal(chooseModel(['gpt-4.1-mini', 'gpt-4o-mini']).id, 'gpt-4o-mini');
+  assert.equal(chooseModel(['gpt-4.1-nano-2025-04-14', 'gpt-4o-mini']).id, 'gpt-4.1-nano-2025-04-14');
+  assert.throws(() => chooseModel(['unknown-expensive-model', 'gpt-4.1-nano-preview']), /No supported/);
+  assert.throws(() => chooseModel(['x'], [{id: 'x', inputRate: -1, outputRate: 1}]), /Invalid/);
+  const fetcher = async () => Response.json({data: [{id: 'gpt-4.1-mini'}]});
+  const selected = await resolveConfig({CLASSIFIER_URL: config.url, CLASSIFIER_API_KEY: config.key, CLASSIFIER_MODEL: 'unavailable-old-setting'}, fetcher as typeof fetch);
+  assert.equal(selected?.model, 'gpt-4.1-mini'); assert.equal(selected?.inputRate, 0.40);
+  assert.equal(await resolveConfig({}), undefined);
+});
+test('passed evaluation is reused only for the same model and changed model triggers reevaluation', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'auto-eval-'));
+  try {
+    await mkdir(`${root}/catalog`); await mkdir(`${root}/evaluation`); await mkdir(`${root}/reports/evaluation`, {recursive: true});
+    await copyFile('evaluation/cases.json', `${root}/evaluation/cases.json`);
+    await writeFile(`${root}/reports/evaluation/latest.json`, JSON.stringify({status: 'passed', model: config.model, url: config.url, promptVersion: PROMPT_VERSION, fixtureVersion: EVALUATION_VERSION}));
+    let calls = 0;
+    const fixtures = JSON.parse(await readFile('evaluation/cases.json', 'utf8'));
+    const fetcher = async (_url: any, options: any) => {
+      calls++;
+      const docs = JSON.parse(JSON.parse(options.body).messages[1].content);
+      return Response.json({choices: [{message: {content: JSON.stringify({decisions: docs.map((d: any) => ({name: d.name, relevant: fixtures.cases.find((x: any) => x.name === d.name).expected, reason: 'Mock'}))})}}]});
+    };
+    await ensureEvaluation(root, config, fetcher as typeof fetch); assert.equal(calls, 0);
+    await ensureEvaluation(root, {...config, model: 'changed-model'}, fetcher as typeof fetch); assert.equal(calls, 2);
+  } finally { await rm(root, {recursive: true}); }
+});
