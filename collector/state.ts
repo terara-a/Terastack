@@ -1,6 +1,6 @@
 import type {Document, Decision} from './core.ts';
 // Latest revision only. Empty RFC revision/time avoid retaining immutable metadata.
-export type Row = [rev: string, time: string, relevant: boolean | null, classifier?: string, attemptedAt?: string];
+export type Row = [rev: string, time: string, relevant: boolean | null, classifier?: string, attemptedAt?: string, discoveredAt?: string];
 export type Related = {rev: string; title: string; url: string; reason: string};
 export type State = {version: 2; lastSuccess?: string; index: Record<string, Row>};
 export function empty(): State { return {version: 2, index: {}}; }
@@ -8,7 +8,7 @@ export function ingest(state: State, doc: Document): boolean {
   const rfc = /^rfc\d+$/.test(doc.name);
   const old = state.index[doc.name];
   if (old && (rfc || (old[0] === doc.rev && old[1] === doc.time))) return false;
-  state.index[doc.name] = [rfc ? '' : doc.rev, rfc ? '' : doc.time, null];
+  state.index[doc.name] = [rfc ? '' : doc.rev, rfc ? '' : doc.time, null, '', '', new Date().toISOString()];
   return true;
 }
 export function setDecision(state: State, related: Record<string, Related>, doc: Document, decision: Decision, classifier: string, at: string): void {
