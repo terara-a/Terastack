@@ -91,4 +91,14 @@ jobs:
             reports/
       - name: Report model failure after preserving budget and completed batches
         if: steps.classify.outcome == 'failure'
-        run: exit 1
+        run: |
+          if test "$CLASSIFY_MODE" = evaluate && test -f reports/evaluation/latest.json; then
+            node --input-type=module - <<'JS'
+          import {readFileSync, appendFileSync} from 'node:fs';
+          const report = JSON.parse(readFileSync('reports/evaluation/latest.json', 'utf8'));
+          const summary = JSON.stringify({status: report.status, error: report.error, metrics: report.metrics}, null, 2);
+          console.error(summary);
+          if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `### Evaluation failed\n\n\`\`\`json\n${summary}\n\`\`\`\n`);
+          JS
+          fi
+          exit 1

@@ -206,3 +206,19 @@ test('parser rejects incomplete batches and budget reservation keeps failed char
   await assert.rejects(execute(batch, [draft], config, failure as typeof fetch), /HTTP 429/);
   assert.equal(ledger.reservedUSD, batch.reserveUSD);
 });
+
+test('provider failure writes failed evaluation with safe diagnostics and retained reservation', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'evaluate-failure-'));
+  try {
+    await mkdir(`${root}/catalog`); await mkdir(`${root}/evaluation`);
+    await copyFile('evaluation/cases.json', `${root}/evaluation/cases.json`);
+    const provider = async () => Response.json({error: {code: 'insufficient_quota', type: 'insufficient_quota', message: `Sensitive provider text ${config.key}`, param: null}}, {status: 429});
+    await assert.rejects(evaluate(root, config, provider as typeof fetch), /429.*insufficient_quota/);
+    const text = await readFile(`${root}/reports/evaluation/latest.json`, 'utf8');
+    const report = JSON.parse(text);
+    assert.equal(report.status, 'failed'); assert.equal(report.error.status, 429);
+    assert.equal(report.error.code, 'insufficient_quota'); assert.equal(report.completedCount, 0);
+    assert.equal(report.ledger.calls, 1); assert.ok(report.ledger.reservedUSD > 0);
+    assert.ok(!text.includes(config.key)); assert.ok(!text.includes('Sensitive provider text'));
+  } finally { await rm(root, {recursive: true}); }
+});

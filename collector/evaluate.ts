@@ -1,5 +1,5 @@
 import {readFile, writeFile, mkdir, rename} from 'node:fs/promises';
-import {prepare, reserve, execute, configFromEnv, PROMPT_VERSION} from './model.ts';
+import {prepare, reserve, execute, configFromEnv, PROMPT_VERSION, failureDetails} from './model.ts';
 import type {Config, Ledger} from './model.ts';
 import type {Decision, Document} from './core.ts';
 export const EVALUATION_VERSION = 'authz-eval-v1';
@@ -27,16 +27,26 @@ export async function evaluate(root = '.', config: Config | undefined = configFr
   const reservedBefore = ledger.reservedUSD;
   const all = new Map<string, Decision>();
   const started = Date.now();
-  for (let i = 0; i < fixture.cases.length; i += 10) {
-    const docs: Document[] = fixture.cases.slice(i, i + 10).map(({expected, ...d}: any) => ({...d, rev: '', time: '', resource_uri: ''}));
-    const batch = prepare(docs, config);
-    if (!reserve(ledger, batch, config)) throw new Error('Evaluation budget exhausted; raise the explicit cumulative cap to continue');
-    await save('catalog/classification-budget.json', ledger);
-    const result = await execute(batch, docs, config, fetcher);
-    ledger.inputTokens += result.inputTokens ?? 0; ledger.outputTokens += result.outputTokens ?? 0;
-    if (result.inputTokens !== null && result.outputTokens !== null) ledger.usageReportedCalls = (ledger.usageReportedCalls ?? 0) + 1;
-    await save('catalog/classification-budget.json', ledger);
-    for (const [name, decision] of result.decisions) all.set(name, decision);
+  try {
+    for (let i = 0; i < fixture.cases.length; i += 10) {
+      const docs: Document[] = fixture.cases.slice(i, i + 10).map(({expected, ...d}: any) => ({...d, rev: '', time: '', resource_uri: ''}));
+      const batch = prepare(docs, config);
+      if (!reserve(ledger, batch, config)) throw new Error('Evaluation budget exhausted; raise the explicit cumulative cap to continue');
+      await save('catalog/classification-budget.json', ledger);
+      const result = await execute(batch, docs, config, fetcher);
+      ledger.inputTokens += result.inputTokens ?? 0; ledger.outputTokens += result.outputTokens ?? 0;
+      if (result.inputTokens !== null && result.outputTokens !== null) ledger.usageReportedCalls = (ledger.usageReportedCalls ?? 0) + 1;
+      await save('catalog/classification-budget.json', ledger);
+      for (const [name, decision] of result.decisions) all.set(name, decision);
+    }
+  } catch (error) {
+    await save('reports/evaluation/latest.json', {
+      at: new Date().toISOString(), status: 'failed', model: config.model, url: config.url,
+      promptVersion: PROMPT_VERSION, fixtureVersion: fixture.version,
+      durationMs: Date.now() - started, completedCount: all.size,
+      error: failureDetails(error), ledger
+    });
+    throw error;
   }
   const measured = metrics(fixture.cases, all);
   const passed = measured.recall >= 0.9 && measured.precision >= 0.8 && measured.uncertain === 0;

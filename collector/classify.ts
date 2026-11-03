@@ -3,7 +3,7 @@ import {getJson, API} from './core.ts';
 import type {Document} from './core.ts';
 import {encode, ingest, setDecision} from './state.ts';
 import type {State, Related} from './state.ts';
-import {configFromEnv, PROMPT_VERSION, prepare, reserve, execute} from './model.ts';
+import {configFromEnv, PROMPT_VERSION, prepare, reserve, execute, failureDetails} from './model.ts';
 import {EVALUATION_VERSION} from './evaluate.ts';
 import type {Ledger, Config} from './model.ts';
 export function queue(state: State, mode: string, now = Date.now()): string[] {
@@ -33,6 +33,7 @@ export async function classifyPending(root = '.', mode = 'daily', config: Config
   const save = async (path: string, value: string) => { await writeFile(`${root}/${path}.tmp`, value); await rename(`${root}/${path}.tmp`, `${root}/${path}`); };
   const completed: string[] = [];
   let status = 'completed';
+  let failure: Record<string, unknown> | undefined;
   try {
     for (let offset = 0; offset < names.length; offset += 10) {
       if (ledger.reservedUSD >= config.maxUSD) { status = 'budget_exhausted'; break; }
@@ -62,9 +63,9 @@ export async function classifyPending(root = '.', mode = 'daily', config: Config
       await save('catalog/classification-budget.json', JSON.stringify(ledger, null, 2) + '\n');
       if (docs.length < Math.min(10, names.length - offset)) { status = 'budget_exhausted'; break; }
     }
-  } catch (error) { status = 'failed'; throw error; }
+  } catch (error) { status = 'failed'; failure = failureDetails(error); throw error; }
   finally {
-    if (completed.length || status !== 'completed') await save(`reports/classification/${at.replace(/[:.]/g, '-')}.json`, JSON.stringify({at, mode, status, model: config.model, inputRate: config.inputRate, outputRate: config.outputRate, maxUSD: config.maxUSD, promptVersion: PROMPT_VERSION, completed, pending: Object.values(state.index).filter(row => row[2] === null).length, ...ledger}, null, 2) + '\n');
+    if (completed.length || status !== 'completed') await save(`reports/classification/${at.replace(/[:.]/g, '-')}.json`, JSON.stringify({at, mode, status, model: config.model, inputRate: config.inputRate, outputRate: config.outputRate, maxUSD: config.maxUSD, promptVersion: PROMPT_VERSION, completed, error: failure, pending: Object.values(state.index).filter(row => row[2] === null).length, ...ledger}, null, 2) + '\n');
     console.log(`Classification ${status}: ${completed.length} documents; cumulative reserved USD ${ledger.reservedUSD.toFixed(6)}`);
   }
 }
