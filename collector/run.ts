@@ -17,10 +17,22 @@ for await (const doc of documents(full ? undefined : overlap(state.lastSuccess),
   const key = revisionKey(doc);
   const previous = state.entries[key];
   if (previous && previous.document.time === doc.time && previous.decision.relevant !== null) continue;
-  const decision = await classify(doc, {url: process.env.CLASSIFIER_URL, key: process.env.CLASSIFIER_API_KEY, model: process.env.CLASSIFIER_MODEL});
+  const decision = previous?.decision ?? {relevant: null, reason: 'Awaiting semantic review'};
   state.entries[key] = {document: doc, decision, observedAt: started};
   changed.push(key);
 }
+}
+// Bound model costs; older pending documents remain eligible every day.
+const budget = Number(process.env.CLASSIFY_LIMIT ?? 30);
+if (!Number.isInteger(budget) || budget < 0) throw new Error('Invalid CLASSIFY_LIMIT');
+if (process.env.CLASSIFIER_URL && process.env.CLASSIFIER_API_KEY && process.env.CLASSIFIER_MODEL) {
+  let count = 0;
+  for (const [key, entry] of Object.entries(state.entries)) {
+    if (entry.decision.relevant !== null || count >= budget) continue;
+    entry.decision = await classify(entry.document, {url: process.env.CLASSIFIER_URL, key: process.env.CLASSIFIER_API_KEY, model: process.env.CLASSIFIER_MODEL});
+    if (!changed.includes(key)) changed.push(key);
+    count++;
+  }
 }
 // Commit checkpoint only after every page and classification succeeded.
 state.lastSuccess = started;

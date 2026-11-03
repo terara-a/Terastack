@@ -25,6 +25,8 @@ FULL_SCAN=true npm run collect
 
 Datatracker `/api/v1/doc/document/?type=draft&limit=100` と `type=rfc` の全ページを取得します。入口にキーワードや WG フィルターを置かず、未知の名称も保存します。初回は既存 RFC・ドラフトも全件取得します。通常は `time__gte` と前回成功から3日の重複期間で差分取得し、日曜日には全件再照合します。文書名とリビジョンで識別し、同一版の状態更新も time の変更として検出します。ページング失敗、APIスキーマ不一致、分類失敗では成功時刻を進めません。
 
+分類は1実行30件まで（`CLASSIFY_LIMIT` で変更可能）。未判定の既存候補も毎日処理し、API費用を制限します。
+
 分類は OpenAI 互換の Chat Completions API を使用します。実行環境または GitHub Actions に次を設定してください。
 
 - `CLASSIFIER_URL`: HTTPS の chat/completions エンドポイント
