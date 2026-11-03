@@ -71,6 +71,7 @@ jobs:
           fi
       - uses: actions/upload-artifact@v4
         if: always()
+        continue-on-error: true
         with:
           name: classification-checkpoint-${{ github.run_id }}
           path: |
