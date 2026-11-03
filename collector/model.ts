@@ -3,6 +3,21 @@ export const PROMPT_VERSION = 'semantic-v2';
 export type Config = {url: string; key: string; model: string; inputRate: number; outputRate: number; maxUSD: number};
 export type Ledger = {reservedUSD: number; calls: number; inputTokens: number; outputTokens: number; usageReportedCalls?: number};
 export type Batch = {body: string; reserveUSD: number};
+export class ClassifierError extends Error {
+  details: {status: number; code?: string; type?: string; param?: string};
+  constructor(status: number, error: any, secret = '') {
+    const safe = (value: unknown): string | undefined => typeof value === 'string' && /^[A-Za-z0-9_.-]{1,100}$/.test(value) && !/^sk[-_]/.test(value) && !(secret && value.includes(secret)) ? value : undefined;
+    const details = {status, code: safe(error?.code), type: safe(error?.type), param: safe(error?.param)};
+    const labels = [details.code, details.type, details.param].filter(Boolean);
+    super(`Classifier HTTP ${status}${labels.length ? ` (${labels.join(', ')})` : ''}`);
+    this.name = 'ClassifierError'; this.details = details;
+  }
+}
+export function failureDetails(error: unknown): Record<string, unknown> {
+  if (error instanceof ClassifierError) return {kind: 'provider_error', ...error.details};
+  if (error instanceof Error && error.message.startsWith('Evaluation budget exhausted')) return {kind: 'budget_exhausted'};
+  return {kind: 'request_or_response_error', message: 'Evaluation could not complete; inspect Actions logs'};
+}
 export function configFromEnv(env = process.env): Config | undefined {
   const names = ['CLASSIFIER_URL', 'CLASSIFIER_API_KEY', 'CLASSIFIER_MODEL'];
   if (names.every(name => !env[name])) return undefined;
@@ -33,7 +48,11 @@ export function reserve(ledger: Ledger, batch: Batch, config: Config): boolean {
 export async function execute(batch: Batch, docs: Document[], config: Config, fetcher = fetch): Promise<{decisions: Map<string, Decision>; inputTokens: number | null; outputTokens: number | null}> {
   // No automatic model retries: failed calls may still be billed.
   const response = await fetcher(config.url, {method: 'POST', signal: AbortSignal.timeout(120000), headers: {'Authorization': `Bearer ${config.key}`, 'Content-Type': 'application/json'}, body: batch.body});
-  if (!response.ok) throw new Error(`Classifier HTTP ${response.status}`);
+  if (!response.ok) {
+    const body = await response.json().catch(() => undefined) as any;
+    // Do not log raw provider messages, response bodies or request credentials.
+    throw new ClassifierError(response.status, body?.error, config.key);
+  }
   const data = await response.json() as any;
   const decisions = JSON.parse(data.choices?.[0]?.message?.content).decisions;
   if (!Array.isArray(decisions) || decisions.length !== docs.length) throw new Error('Classifier returned wrong decision count');
