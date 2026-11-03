@@ -16,15 +16,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: standards/daily
-        continue-on-error: true
-        id: pending
-      - uses: actions/checkout@v4
-        if: steps.pending.outcome == 'failure'
+          ref: main
+          fetch-depth: 0
+      # Run current main code, carrying only unmerged catalog data forward.
+      - name: Restore pending catalog changes
+        shell: bash
+        run: |
+          if git ls-remote --exit-code --heads origin standards/daily >/dev/null; then
+            git fetch origin standards/daily
+            if ! git merge-base --is-ancestor FETCH_HEAD HEAD; then
+              git restore --source=FETCH_HEAD -- catalog reports/daily
+            fi
+          fi
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
       - run: npm test
+      - name: Compact legacy data if present
+        run: |
+          if test -f catalog/state.json; then node collector/migrate.ts; fi
       - run: npm run collect
         env:
           CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
@@ -36,7 +46,7 @@ jobs:
           base: main
           title: 'Update standards catalog and daily review queue'
           commit-message: 'Update standards catalog'
-          body: 'All-topic Internet-Draft discovery. Review relevant and uncertain documents in reports/daily. No generated protocol implementation is automatically merged.'
+          body: 'All-topic RFC and Internet-Draft discovery. Review catalog/related.json and compact daily summaries; pending decisions are retained in catalog/state.json. No generated protocol implementation is automatically merged.'
           add-paths: |
             catalog/
             reports/daily/
