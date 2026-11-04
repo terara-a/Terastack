@@ -5,9 +5,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Evaluate first; daily prioritizes updates; backfill resumes initial classification'
+        description: 'models lists available models without inference; evaluate before classifying'
         type: choice
-        options: [evaluate, daily, backfill]
+        options: [models, evaluate, daily, backfill]
         default: evaluate
       limit:
         description: 'Maximum documents (backfill default 500, daily default 30)'
@@ -30,6 +30,8 @@ jobs:
     env:
       CLASSIFY_MODE: ${{ inputs.mode || 'daily' }}
       CLASSIFY_LIMIT: ${{ inputs.limit }}
+      CLASSIFIER_SELECTION: ${{ vars.CLASSIFIER_SELECTION || 'auto' }}
+      CLASSIFIER_MODEL_PROFILES: ${{ vars.CLASSIFIER_MODEL_PROFILES }}
       CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
       CLASSIFIER_MODEL: ${{ vars.CLASSIFIER_MODEL }}
       CLASSIFIER_API_KEY: ${{ secrets.CLASSIFIER_API_KEY }}
@@ -39,10 +41,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ inputs.mode == 'models' && github.ref_name || 'main' }}
           fetch-depth: 0
       # Run current main code, carrying only unmerged catalog data forward.
       - name: Restore pending catalog changes
+        if: env.CLASSIFY_MODE != 'models'
         shell: bash
         run: |
           if git ls-remote --exit-code --heads origin standards/daily >/dev/null; then
@@ -56,6 +59,7 @@ jobs:
           node-version: '24'
       - run: npm test
       - name: Compact legacy data if present
+        if: env.CLASSIFY_MODE != 'models'
         run: |
           if test -f catalog/state.json; then node collector/migrate.ts; fi
       - run: npm run collect
@@ -64,13 +68,15 @@ jobs:
         id: classify
         continue-on-error: true
         run: |
-          if test "$CLASSIFY_MODE" = evaluate; then
+          if test "$CLASSIFY_MODE" = models; then
+            npm run check:models
+          elif test "$CLASSIFY_MODE" = evaluate; then
             npm run evaluate
           else
             npm run classify
           fi
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && env.CLASSIFY_MODE != 'models'
         continue-on-error: true
         with:
           name: classification-checkpoint-${{ github.run_id }}
@@ -80,6 +86,7 @@ jobs:
             reports/classification/
           if-no-files-found: ignore
       - uses: peter-evans/create-pull-request@v7
+        if: env.CLASSIFY_MODE != 'models'
         with:
           branch: standards/daily
           base: main

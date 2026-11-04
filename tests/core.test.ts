@@ -222,3 +222,72 @@ test('provider failure writes failed evaluation with safe diagnostics and retain
     assert.ok(!text.includes(config.key)); assert.ok(!text.includes('Sensitive provider text'));
   } finally { await rm(root, {recursive: true}); }
 });
+
+import {modelsURL, checkModels} from '../scripts/check-models.ts';
+test('model listing uses only GET models and reports configured model availability', async () => {
+  assert.equal(modelsURL('https://api.openai.com/v1/chat/completions'), 'https://api.openai.com/v1/models');
+  assert.throws(() => modelsURL('http://example.test/chat/completions'), /HTTPS/);
+  const calls: string[] = [];
+  const fetcher = async (url: any, options: any) => {
+    calls.push(String(url)); assert.equal(options.body, undefined); assert.equal(options.method, undefined);
+    return Response.json({data: [{id: 'other-model'}, {id: 'listed-model'}, {id: 'listed-model'}]});
+  };
+  const result = await checkModels(config.url, config.key, 'gpt-4.1-nano', fetcher as typeof fetch);
+  assert.equal(result.listed, false); assert.deepEqual(result.models, ['listed-model', 'other-model']);
+  assert.equal((await checkModels(config.url, config.key, 'listed-model', fetcher as typeof fetch)).listed, true);
+  assert.ok(calls.every(url => url.endsWith('/models')));
+});
+test('model listing fails safely on missing credentials, denied access and malformed IDs', async () => {
+  await assert.rejects(checkModels(config.url, ''), /not configured/);
+  const denied = async () => Response.json({error: {code: 'insufficient_permissions', message: config.key}}, {status: 403});
+  await assert.rejects(checkModels(config.url, config.key, '', denied as typeof fetch), /403.*insufficient_permissions/);
+  const malformed = async () => Response.json({data: [{id: 'model\n::error::injected'}]});
+  await assert.rejects(checkModels(config.url, config.key, '', malformed as typeof fetch), /Invalid model/);
+});
+
+import {chooseModel, resolveConfig} from '../collector/select-model.ts';
+import {ensureEvaluation} from '../collector/evaluate.ts';
+test('auto selection chooses the cheapest supported listing and accepts only dated known variants', async () => {
+  assert.equal(chooseModel(['gpt-4.1-mini', 'gpt-4o-mini']).id, 'gpt-4o-mini');
+  assert.equal(chooseModel(['gpt-4.1-nano-2025-04-14', 'gpt-4o-mini']).id, 'gpt-4.1-nano-2025-04-14');
+  assert.throws(() => chooseModel(['unknown-expensive-model', 'gpt-4.1-nano-preview']), /No supported/);
+  assert.throws(() => chooseModel(['x'], [{id: 'x', inputRate: -1, outputRate: 1}]), /Invalid/);
+  const fetcher = async () => Response.json({data: [{id: 'gpt-4.1-mini'}]});
+  const selected = await resolveConfig({CLASSIFIER_URL: config.url, CLASSIFIER_API_KEY: config.key, CLASSIFIER_MODEL: 'unavailable-old-setting'}, fetcher as typeof fetch);
+  assert.equal(selected?.model, 'gpt-4.1-mini'); assert.equal(selected?.inputRate, 0.40);
+  assert.equal(await resolveConfig({}), undefined);
+});
+test('passed evaluation is reused only for the same model and changed model triggers reevaluation', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'auto-eval-'));
+  try {
+    await mkdir(`${root}/catalog`); await mkdir(`${root}/evaluation`); await mkdir(`${root}/reports/evaluation`, {recursive: true});
+    await copyFile('evaluation/cases.json', `${root}/evaluation/cases.json`);
+    await writeFile(`${root}/reports/evaluation/latest.json`, JSON.stringify({status: 'passed', model: config.model, url: config.url, promptVersion: PROMPT_VERSION, fixtureVersion: EVALUATION_VERSION}));
+    let calls = 0;
+    const fixtures = JSON.parse(await readFile('evaluation/cases.json', 'utf8'));
+    const fetcher = async (_url: any, options: any) => {
+      calls++;
+      const docs = JSON.parse(JSON.parse(options.body).messages[1].content);
+      return Response.json({choices: [{message: {content: JSON.stringify({decisions: docs.map((d: any) => ({name: d.name, relevant: fixtures.cases.find((x: any) => x.name === d.name).expected, reason: 'Mock'}))})}}]});
+    };
+    await ensureEvaluation(root, config, fetcher as typeof fetch); assert.equal(calls, 0);
+    await ensureEvaluation(root, {...config, model: 'changed-model'}, fetcher as typeof fetch); assert.equal(calls, 2);
+  } finally { await rm(root, {recursive: true}); }
+});
+
+import {withSelectedModel} from '../collector/select-model.ts';
+import {ClassifierError} from '../collector/model.ts';
+test('automatic fallback tries a different model only for model_not_found and skips dated siblings', async () => {
+  const env = {CLASSIFIER_URL: config.url, CLASSIFIER_API_KEY: config.key};
+  const fetcher = async () => Response.json({data: ['gpt-4.1-nano', 'gpt-4.1-nano-2025-04-14', 'gpt-4o-mini'].map(id => ({id}))});
+  const tried: string[] = [];
+  const model = await withSelectedModel(async selected => {
+    tried.push(selected!.model);
+    if (selected!.model === 'gpt-4.1-nano') throw new ClassifierError(404, {code: 'model_not_found'});
+    return selected!.model;
+  }, env, fetcher as typeof fetch);
+  assert.equal(model, 'gpt-4o-mini'); assert.deepEqual(tried, ['gpt-4.1-nano', 'gpt-4o-mini']);
+  let calls = 0;
+  await assert.rejects(withSelectedModel(async () => { calls++; throw new ClassifierError(429, {code: 'insufficient_quota'}); }, env, fetcher as typeof fetch), /429/);
+  assert.equal(calls, 1);
+});

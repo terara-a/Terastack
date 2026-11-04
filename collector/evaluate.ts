@@ -1,3 +1,4 @@
+import {withSelectedModel} from './select-model.ts';
 import {readFile, writeFile, mkdir, rename} from 'node:fs/promises';
 import {prepare, reserve, execute, configFromEnv, PROMPT_VERSION, failureDetails} from './model.ts';
 import type {Config, Ledger} from './model.ts';
@@ -12,6 +13,13 @@ export function metrics(cases: {name: string; expected: boolean}[], decisions: M
     else if (decision === true) fp++; else if (decision === false) tn++;
   }
   return {tp, fp, fn, tn, uncertain, recall: tp / (tp + fn || 1), precision: tp / (tp + fp || 1)};
+}
+export async function ensureEvaluation(root: string, config: Config, fetcher = fetch): Promise<void> {
+  let previous: any;
+  try { previous = JSON.parse(await readFile(`${root}/reports/evaluation/latest.json`, 'utf8')); }
+  catch (error: any) { if (error.code !== 'ENOENT') throw error; }
+  if (previous?.status === 'passed' && previous.model === config.model && previous.url === config.url && previous.promptVersion === PROMPT_VERSION && previous.fixtureVersion === EVALUATION_VERSION) return;
+  await evaluate(root, config, fetcher);
 }
 export async function evaluate(root = '.', config: Config | undefined = configFromEnv(), fetcher = fetch): Promise<void> {
   const fixture = JSON.parse(await readFile(`${root}/evaluation/cases.json`, 'utf8'));
@@ -55,4 +63,4 @@ export async function evaluate(root = '.', config: Config | undefined = configFr
   console.log(JSON.stringify({status: report.status, ...measured, durationMs: report.durationMs}));
   if (!passed) throw new Error('Evaluation thresholds not met; review false negatives before bulk classification');
 }
-if (import.meta.url === new URL(process.argv[1], 'file:').href) await evaluate();
+if (import.meta.url === new URL(process.argv[1], 'file:').href) await withSelectedModel(config => evaluate('.', config));
