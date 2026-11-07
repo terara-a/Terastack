@@ -1,0 +1,22 @@
+{
+  "at": "2026-11-07T02:02:16.181Z",
+  "status": "failed",
+  "model": "gpt-4o-mini",
+  "url": "https://api.openai.com/v1/chat/completions",
+  "promptVersion": "semantic-v2",
+  "fixtureVersion": "authz-eval-v1",
+  "durationMs": 1129,
+  "completedCount": 0,
+  "error": {
+    "kind": "provider_error",
+    "status": 429,
+    "code": "credit_balance_exhausted",
+    "type": "insufficient_quota"
+  },
+  "ledger": {
+    "reservedUSD": 0.010977599999999999,
+    "calls": 7,
+    "inputTokens": 0,
+    "outputTokens": 0
+  }
+}
