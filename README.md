@@ -133,15 +133,9 @@ python3 -m http.server 8000 --directory dist
 - [サンプルコード](https://terara-a.github.io/Terastack/samples/pkce/code.html)
 - [実行手順と省略範囲](docs/pkce.md)
 
-Pagesでは認可要求・コード発行・verifierによる交換・リソース取得をブラウザ内で再現します。実際のHTTP実行例はWorkers + Durable Objectsにあります。利用者は固定のデモ主体で、ログイン認証は省略しています。
+Pagesでは認可要求・コード発行・verifierによる交換・リソース取得をブラウザ内で再現します。verifier不一致、state改ざん、コード再利用の拒否も試せます。利用者は固定のデモ主体で、実際のHTTP通信・ログイン認証・永続ストレージは提供しません。
 
-```sh
-npm run dev
-# 別ターミナル
-node examples/pkce-client.mjs --approve
-```
-
-旧 `/examples/pkce` のchallenge計算エンドポイントは廃止しました。Workersはローカルworkerd・SQLite Durable Objectsで検証し、Cloudflareへのデプロイは未実施です。
+デモは上記のPagesローカル確認手順で動作します。サンプルコードのページには、デモで使用するプロトコル処理とクライアント処理を掲載しています。
 
 ## 設定不要になった項目
 

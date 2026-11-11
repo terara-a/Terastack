@@ -1,5 +1,5 @@
 try {
-  for(const [id,path] of [['protocol','./protocol.js'],['worker','./worker.ts.txt'],['client','./client.js'],['example','./client-example.mjs.txt']]) {
+  for(const [id,path] of [['protocol','./protocol.js'],['client','./client.js']]) {
     const response=await fetch(path);if(!response.ok) throw new Error('Source unavailable');
     document.getElementById(id).textContent=await response.text();
   }

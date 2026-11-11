@@ -1,4 +1,4 @@
-// RFC 6749 authorization code grant + RFC 7636 S256, shared by the demo and Worker.
+// RFC 6749 authorization code grant + RFC 7636 S256, simulated locally in the browser.
 export const CLIENT_ID = 'terastack-demo';
 export const REDIRECT_URI = 'https://client.example/callback';
 export const CODE_TTL = 300_000;

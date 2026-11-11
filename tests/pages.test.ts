@@ -23,17 +23,19 @@ test('history is newest first and bounded; empty catalogs remain honest', () => 
 test('site build is repeatable and publishes only whitelisted static files',async()=>{
   const root=await mkdtemp(join(tmpdir(),'pages-'));
   try {
-    await cp('site',`${root}/site`,{recursive:true}); await cp('src',`${root}/src`,{recursive:true}); await cp('examples',`${root}/examples`,{recursive:true}); await mkdir(`${root}/catalog`);
+    await cp('site',`${root}/site`,{recursive:true}); await mkdir(`${root}/catalog`);
     await writeFile(`${root}/catalog/state.json`,JSON.stringify({version:2,index:{rfc1:['','',null]}}));
     await writeFile(`${root}/catalog/private-key.txt`,'NEVER-PUBLISH');
     await mkdir(`${root}/reports/evaluation`,{recursive:true});
     await writeFile(`${root}/reports/evaluation/latest.json`,'not valid JSON: legacy data must not be read');
-    await buildPages(root); const first=await readFile(`${root}/dist/data.json`,'utf8'); await buildPages(root);
+    await buildPages(root); const first=await readFile(`${root}/dist/data.json`,'utf8');
+    await writeFile(`${root}/dist/samples/pkce/obsolete-source.txt`,'removed source');
+    await buildPages(root);
     assert.equal(await readFile(`${root}/dist/data.json`,'utf8'),first);
     assert.deepEqual((await readdir(`${root}/dist`)).sort(),['.nojekyll','app.js','data.json','index.html','samples','style.css']);
     assert.ok(!first.includes('NEVER-PUBLISH'));
     assert.ok((await readFile(`${root}/dist/samples/pkce/index.html`,'utf8')).includes('認可コード'));
-    assert.equal(await readFile(`${root}/dist/samples/pkce/worker.ts.txt`,'utf8'),await readFile('src/worker.ts','utf8'));
+    assert.deepEqual((await readdir(`${root}/dist/samples/pkce`)).sort(),['client.js','code.html','code.js','index.html','protocol.js','sample.css']);
     const html=await readFile(`${root}/dist/index.html`,'utf8'); assert.ok(html.includes('href="./style.css"')); assert.ok(html.includes('src="./app.js"'));
   } finally { await rm(root,{recursive:true}); }
 });

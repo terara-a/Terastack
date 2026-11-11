@@ -4,7 +4,7 @@
 
 - `/samples/`: サンプル一覧
 - `/samples/pkce/`: ブラウザ内でフローを体験
-- `/samples/pkce/code.html`: 公開版と一致する共通ロジック・Workers・クライアントのコード
+- `/samples/pkce/code.html`: 公開版と一致するプロトコル・クライアントのコード
 
 仕様カタログから challenge 計算フォームを移し、認可コード発行からトークン交換までを独立ページにまとめています。
 
@@ -38,38 +38,20 @@ Pages は1つのブラウザ内で3つの役割をシミュレーションしま
 
 順に実行すると、challenge を送り、code が発行され、verifier で交換されることを観察できます。別の verifier・state 改ざん・使用済み code の再利用も試せます。デモ用の値だけを扱ってください。
 
-## 実際の HTTP フローを Workers で動かす
+## ローカルで試す
 
 Node.js 24以上で、リポジトリのルートから:
 
 ```sh
-npm ci
-npm run dev
+npm run build:pages
+python3 -m http.server 8000 --directory dist
 ```
 
-別ターミナルで:
+`http://localhost:8000/samples/pkce/` でデモ、`http://localhost:8000/samples/pkce/code.html` でソースを確認できます。
 
-```sh
-node examples/pkce-client.mjs --approve
-```
+表示される `/authorize`、`/token`、`/resource` はプロトコルの各段階を示すラベルです。実際のHTTPエンドポイントはありません。`https://client.example/callback` は説明用の登録値であり、外部へリダイレクトしません。
 
-クライアントは verifier/state を生成し、認可要求を送信し、固定デモ利用者としての許可を明示的にPOSTします。callback の Location を手動で受け取って state を検証してから code を交換し、リソースを取得します。`--approve` はこのデモの同意操作を行う指定です。
-
-登録値は `client_id=terastack-demo`、`redirect_uri=https://client.example/callback`、`scope=demo.read` に固定しています。callback ホストは説明用でホストしていないため、CLI は外部へリダイレクトを追いません。ブラウザで `/authorize` を直接開くと同意フォームを表示できますが、許可後の外部 callback を受け取る実クライアントUIはこのサンプルでは提供していません。
-
-| エンドポイント | 動作 |
-| --- | --- |
-| `GET /authorize` | 登録値・S256 challengeを検証し同意フォームを表示 |
-| `POST /consent` | 同一originの許可操作でcode発行、拒否ならerror付きcallback |
-| `POST /token` | URLエンコードされた認可コード交換を検証 |
-| `GET /resource` | Bearer token・有効期限を確認 |
-| `GET /health` | ローカル起動確認 |
-
-旧 `POST /examples/pkce` の計算エンドポイントは廃止しました。
-
-Workers では `PKCEIssuer` Durable Object の SQLite ストレージを使用します。code の検証・削除とtoken保存を同じトランザクションに入れ、並行した交換でも一回だけ成功させます。コード期限は5分、トークンは10分です。alarmで期限切れの記録を削除します。ブラウザのMemoryStoreとサーバーの永続ストレージは区別しています。
-
-Cloudflareへのデプロイはこの変更では実行しません。デプロイ時にはDurable ObjectsのbindingとSQLite migrationが必要で、設定はwrangler.jsoncに含めています。Cloudflare側の利用条件・料金は別途確認してください。
+`protocol.js` はコードに challenge・client_id・redirect_uri・期限を結び付け、交換時に検証します。MemoryStoreは処理を直列化し、コードの検証・消費とトークン保存をまとめて行います。ページをリセット・再読み込みすると記録は失われます。コード期限は5分、トークンは10分です。
 
 ## 検証
 
@@ -77,11 +59,9 @@ Cloudflareへのデプロイはこの変更では実行しません。デプロ�
 npm test
 npm run test:pkce
 npm run test:pages
-# wrangler dev 起動中
-node tests/workerd-smoke.mjs
 ```
 
-HTTPの正常系、S256以外、verifier/client/redirect不一致、期限切れ、state不一致、重複パラメーター、コード再利用、並行交換を検証します。`workerd-smoke` は実際のSQLite Durable Objectに対して並行交換等を行います。
+コード発行からリソース取得までの正常系、S256以外、verifier/client/redirect不一致、期限切れ、state不一致、コード再利用、並行交換をブラウザ内と同じロジックで検証します。
 
 ## 省略したもの
 

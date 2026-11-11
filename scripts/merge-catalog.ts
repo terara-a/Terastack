@@ -47,9 +47,6 @@ export async function validateSnapshot(pr: any, repository: string): Promise<str
   try {
     // Build with trusted current code, never run scripts from the PR head.
     await cp('site',join(root,'site'),{recursive:true});
-    await mkdir(join(root,'src'),{recursive:true});
-    await cp('src/worker.ts',join(root,'src/worker.ts'));
-    await cp('examples',join(root,'examples'),{recursive:true});
     const files = git('ls-tree','-r','--name-only',pr.head.sha,'--','catalog','reports').trim().split('\n');
     for (const file of files) {
       if (!file.endsWith('.json') || !(file.startsWith('catalog/') || file.startsWith('reports/'))) continue;

@@ -8,14 +8,9 @@
   "scripts": {
     "test": "node tests/core.test.ts",
     "collect": "node collector/run.ts",
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
     "build:pages": "node scripts/build-pages.ts",
     "test:pages": "node tests/pages.test.ts",
     "test:merge-catalog": "node tests/merge-catalog.test.ts",
     "test:pkce": "node tests/pkce.test.ts"
-  },
-  "devDependencies": {
-    "wrangler": "4.45.0"
   }
 }
