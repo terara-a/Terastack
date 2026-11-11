@@ -20,6 +20,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 concurrency:
   group: standards-discovery
   cancel-in-progress: false
@@ -80,6 +81,8 @@ jobs:
       - run: python -m unittest discover -s semantic -p 'test_*.py'
         if: env.CLASSIFICATION_ENGINE == 'local' && env.CLASSIFY_MODE != 'models'
       - run: npm test
+      - run: npm run test:merge-catalog
+      - run: npm run test:pages
       - name: Compact legacy data if present
         if: env.CLASSIFY_MODE != 'models'
         run: |
@@ -111,16 +114,23 @@ jobs:
             reports/semantic/
           if-no-files-found: ignore
       - uses: peter-evans/create-pull-request@v7
+        id: catalog_pr
         if: env.CLASSIFY_MODE != 'models'
         with:
           branch: standards/daily
           base: main
           title: 'Update standards catalog and daily review queue'
           commit-message: 'Update standards catalog'
-          body: 'All-topic RFC and Internet-Draft discovery. Review catalog/related.json and compact daily summaries; pending decisions are retained in catalog/state.json. No generated protocol implementation is automatically merged.'
+          body: 'Generated discovery data only. Semantic candidates are unreviewed and can be published automatically after validation. Confirmed/excluded decisions in catalog/reviewed.json and code/rules always require manual review.'
           add-paths: |
             catalog/
             reports/
+      - name: Validate and merge generated data
+        if: github.ref == 'refs/heads/main' && steps.classify.outcome == 'success' && steps.catalog_pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CATALOG_PR_NUMBER: ${{ steps.catalog_pr.outputs.pull-request-number }}
+        run: node scripts/merge-catalog.ts
       - name: Report model failure after preserving budget and completed batches
         if: steps.classify.outcome == 'failure'
         run: |
