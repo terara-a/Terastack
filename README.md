@@ -54,3 +54,23 @@ node collector/migrate.ts
 実装済み: RFC・ドラフトの全件/差分発見、意味による概要分類、未判定レビューキュー、日次カタログ PR、PKCE サンプル。
 
 未実装: 公式本文の版別保存・ハッシュ、節単位差分、RFC Editor の Updates/Obsoletes/Errata の照合、参照先探索、除外判定の定期再分類、JWT/DPoP サンプル、LLM による日次のコード生成。分類の網羅性は保証できません。
+
+## GitHub Pages
+
+収集状況・関連仕様の検索・最近の収集履歴・ブラウザ内のPKCEデモを静的ページとして公開できます。分類が未完了の場合も、未判定件数と空の関連一覧をそのまま表示します。
+
+1. リポジトリの **Settings → Pages → Build and deployment → Source** を **GitHub Actions** に設定します（管理権限が必要）。
+2. Pages対応の変更をmainへマージします。
+3. Actionsの **GitHub Pages** が成功すると、デプロイジョブのURLから開けます。設定後の再実行はRun workflowからも可能です。
+
+mainへの更新ごとにサイトを再生成します。収集結果は更新PRをマージした後に反映されます。PRではビルド検証だけを行い、デプロイしません。
+
+```sh
+npm run test:pages
+npm run build:pages
+python3 -m http.server 8000 --directory dist
+```
+
+`site/` はHTML/CSS/JavaScript、`scripts/build-pages.ts` は公開データの生成処理です。公開物は `dist/` の静的ファイルだけです。全件索引・費用台帳・API応答・キーは配信せず、件数と関連文書の許可した項目だけを `data.json` に書き出します。パスは相対指定なので `/Terastack/` などのプロジェクトページでも動きます。外部のフォントやJavaScript CDNは使いません。
+
+静的サイトの公開はモデルAPIの課金・分類・Workersのサーバー実装とは独立しています。認可サーバーや状態を持つサンプルは引き続きWorkers等で実行します。
