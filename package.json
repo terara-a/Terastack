@@ -14,7 +14,8 @@
     "evaluate": "node collector/evaluate.ts",
     "check:models": "node scripts/check-models.ts",
     "build:pages": "node scripts/build-pages.ts",
-    "test:pages": "node tests/pages.test.ts"
+    "test:pages": "node tests/pages.test.ts",
+    "test:merge-catalog": "node tests/merge-catalog.test.ts"
   },
   "devDependencies": {
     "wrangler": "4.45.0"

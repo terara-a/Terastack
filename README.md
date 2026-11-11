@@ -78,3 +78,5 @@ python3 -m http.server 8000 --directory dist
 ## 無料モデルによる関連候補の抽出
 
 既定の日次処理はCPU埋め込みモデルを使用し、有料APIを必須にしません。Pagesには人が確認した仕様と、機械が見つけた未確認候補を区別して掲載します。最初は `evaluate`、次に `backfill` で分割処理してください。手順・評価の限界・レビュー方法は [ローカル候補抽出](docs/local-semantic.md) を参照してください。従来のAPI分類設定は明示的に `CLASSIFICATION_ENGINE=api` にした場合だけ使います。
+
+日次・backfillの生成データPRは、成功した収集ジョブで検証した後、自動マージしてPagesを更新します。候補は未確認のままで、全件レビューは不要です。コード・抽出ルール・reviewed.jsonの変更は対象外です。詳細は [候補抽出の運用](docs/local-semantic.md#レビュー作業を必須にしない運用) を参照してください。
