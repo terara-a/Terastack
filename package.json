@@ -11,6 +11,8 @@
     "build:pages": "node scripts/build-pages.ts",
     "test:pages": "node tests/pages.test.ts",
     "test:merge-catalog": "node tests/merge-catalog.test.ts",
-    "test:pkce": "node tests/pkce.test.ts"
+    "test:pkce": "node tests/pkce.test.ts",
+    "collect:openid": "python3 collector/openid.py",
+    "test:openid": "python3 -m unittest discover -s collector -p 'test_*.py'"
   }
 }
