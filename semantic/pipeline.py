@@ -181,7 +181,7 @@ def run(mode, limit, root=ROOT):
         # Reproducible audit sample of low-scoring documents; never label them unrelated.
         low=sorted(name for name,row in state['entries'].items() if row[1]<report['threshold'])
         sample=random.Random(at[:10]).sample(low,min(20,len(low)))
-        save(root/'reports/semantic/progress.json',{'at':at,'processed':processed,'screened':len(state['entries']),'total':len(index),'candidates':len(candidates),'lowScoreAuditSample':sample,'model':config['model']})
+        save(root/'reports/semantic/progress.json',{'at':at,'processed':processed,'screened':len(state['entries']),'total':len(index),'remainingCount':len(set(index)-set(state['entries'])),'remainingSample':sorted(set(index)-set(state['entries']))[:20],'candidates':len(candidates),'lowScoreAuditSample':sample,'model':config['model']})
     print(f'Scored {processed}; screened {len(state["entries"])}/{len(index)}; candidates {len(candidates)}')
 
 if __name__=='__main__':

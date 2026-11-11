@@ -67,6 +67,7 @@ class PipelineTests(unittest.TestCase):
                 pipeline.run('backfill',1,root)
                 first=json.loads((root/'catalog/semantic-index.json').read_text())
                 self.assertEqual(len(first['entries']),1)
+                self.assertEqual(json.loads((root/'reports/semantic/progress.json').read_text())['remainingCount'],2)
                 pipeline.run('backfill',1,root)
                 second=json.loads((root/'catalog/semantic-index.json').read_text())
                 self.assertEqual(len(second['entries']),2)
@@ -77,6 +78,10 @@ class PipelineTests(unittest.TestCase):
                         pipeline.run('backfill',64,root)
                 preserved=json.loads((root/'catalog/semantic-index.json').read_text())
                 self.assertEqual(second,preserved)
+                with patch.object(pipeline,'request',lambda url: {'objects':[]}):
+                    with self.assertRaisesRegex(ValueError,'Metadata not found'):
+                        pipeline.run('backfill',64,root)
+                self.assertEqual(json.loads((root/'reports/semantic/progress.json').read_text())['remainingCount'],1)
     def test_tail_completion_includes_old_missing_names_without_discovery_timestamp(self):
         from pipeline import priorities
         index={'rfc10':['','',None],'draft-old':['00','old',None],'draft-new':['01','new',None,'','','2026-11-11']}
