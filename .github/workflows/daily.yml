@@ -28,22 +28,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 180
     env:
+      CLASSIFICATION_ENGINE: ${{ vars.CLASSIFICATION_ENGINE || 'local' }}
+      FASTEMBED_CACHE_PATH: .cache/fastembed
+      HF_HUB_DISABLE_TELEMETRY: '1'
       CLASSIFY_MODE: ${{ inputs.mode || 'daily' }}
       CLASSIFY_LIMIT: ${{ inputs.limit }}
       CLASSIFIER_SELECTION: ${{ vars.CLASSIFIER_SELECTION || 'auto' }}
       CLASSIFIER_MODEL_PROFILES: ${{ vars.CLASSIFIER_MODEL_PROFILES }}
       CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
       CLASSIFIER_MODEL: ${{ vars.CLASSIFIER_MODEL }}
-      CLASSIFIER_API_KEY: ${{ secrets.CLASSIFIER_API_KEY }}
+      CLASSIFIER_API_KEY: ${{ (inputs.mode == 'models' || vars.CLASSIFICATION_ENGINE == 'api') && secrets.CLASSIFIER_API_KEY || '' }}
       CLASSIFIER_INPUT_USD_PER_MILLION: ${{ vars.CLASSIFIER_INPUT_USD_PER_MILLION }}
       CLASSIFIER_OUTPUT_USD_PER_MILLION: ${{ vars.CLASSIFIER_OUTPUT_USD_PER_MILLION }}
       CLASSIFIER_MAX_USD: ${{ inputs.max_usd || vars.CLASSIFIER_MAX_USD || '0.10' }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.mode == 'models' && github.ref_name || 'main' }}
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
-      # Run current main code, carrying only unmerged catalog data forward.
+      # Respect the selected manual ref; scheduled runs use main. Carry only pending data forward.
       - name: Restore pending catalog changes
         if: env.CLASSIFY_MODE != 'models'
         shell: bash
@@ -51,12 +54,31 @@ jobs:
           if git ls-remote --exit-code --heads origin standards/daily >/dev/null; then
             git fetch origin standards/daily
             if ! git merge-base --is-ancestor FETCH_HEAD HEAD; then
-              git restore --source=FETCH_HEAD -- catalog reports
+              for path in catalog/state.json catalog/related.json catalog/classification-budget.json catalog/candidates.json catalog/semantic-index.json reports; do
+                if git cat-file -e "FETCH_HEAD:$path" 2>/dev/null; then
+                  git restore --source=FETCH_HEAD -- "$path"
+                fi
+              done
             fi
           fi
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - uses: actions/setup-python@v5
+        if: env.CLASSIFICATION_ENGINE == 'local' && env.CLASSIFY_MODE != 'models'
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: semantic/requirements.txt
+      - uses: actions/cache@v4
+        if: env.CLASSIFICATION_ENGINE == 'local' && env.CLASSIFY_MODE != 'models'
+        with:
+          path: .cache/fastembed
+          key: fastembed-${{ runner.os }}-${{ hashFiles('semantic/requirements.txt', 'semantic/config.json') }}
+      - run: python -m pip install -r semantic/requirements.txt
+        if: env.CLASSIFICATION_ENGINE == 'local' && env.CLASSIFY_MODE != 'models'
+      - run: python -m unittest discover -s semantic -p 'test_*.py'
+        if: env.CLASSIFICATION_ENGINE == 'local' && env.CLASSIFY_MODE != 'models'
       - run: npm test
       - name: Compact legacy data if present
         if: env.CLASSIFY_MODE != 'models'
@@ -70,6 +92,8 @@ jobs:
         run: |
           if test "$CLASSIFY_MODE" = models; then
             npm run check:models
+          elif test "$CLASSIFICATION_ENGINE" = local; then
+            python semantic/pipeline.py --mode "$CLASSIFY_MODE" --limit "${CLASSIFY_LIMIT:-2000}"
           elif test "$CLASSIFY_MODE" = evaluate; then
             npm run evaluate
           else
@@ -84,6 +108,7 @@ jobs:
             catalog/
             reports/evaluation/
             reports/classification/
+            reports/semantic/
           if-no-files-found: ignore
       - uses: peter-evans/create-pull-request@v7
         if: env.CLASSIFY_MODE != 'models'
@@ -99,7 +124,7 @@ jobs:
       - name: Report model failure after preserving budget and completed batches
         if: steps.classify.outcome == 'failure'
         run: |
-          if test "$CLASSIFY_MODE" = evaluate && test -f reports/evaluation/latest.json; then
+          if test "$CLASSIFICATION_ENGINE" != local && test "$CLASSIFY_MODE" = evaluate && test -f reports/evaluation/latest.json; then
             node --input-type=module - <<'JS'
           import {readFileSync, appendFileSync} from 'node:fs';
           const report = JSON.parse(readFileSync('reports/evaluation/latest.json', 'utf8'));
