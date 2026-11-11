@@ -18,11 +18,12 @@ ORIGIN = 'https://openid.net'
 LIST = ORIGIN + '/developers/specs/'
 AGENT = 'Terastack/1.0 (+https://github.com/terara-a/Terastack; standards monitor)'
 MAX_BODY = 2 * 1024 * 1024
+LISTING_PARSER_VERSION = 2
 
 
 def canonical(href):
     url = urlsplit(urljoin(LIST, href))
-    if url.scheme != 'https' or url.netloc != 'openid.net' or not re.fullmatch(r'/specs/[A-Za-z0-9_.-]+\.html', url.path):
+    if url.scheme not in {'http', 'https'} or url.netloc != 'openid.net' or not re.fullmatch(r'/specs/[A-Za-z0-9_.-]+\.html', url.path):
         return None
     return urlunsplit(('https', 'openid.net', url.path, '', ''))
 
@@ -64,42 +65,130 @@ def stage(text):
         return "Implementer's Draft"
     if re.search(r'\bfinal\b', text, re.I):
         return 'Final'
-    if re.search(r'\bdraft\b', text, re.I):
+    if re.search(r'\bdrafts?\b', text, re.I):
         return 'Draft'
     return 'Other'
+
+
+def nodes(node):
+    yield node
+    for child in node.children:
+        if isinstance(child, Node):
+            yield from nodes(child)
+
+
+def text(node):
+    return ' '.join(node.text().split())
+
+
+def version_label(label):
+    # Explicit publication links are alternate editions, not citations in the prose.
+    return bool(re.fullmatch(r"(?:(?:most recent|latest)\s+)?(?:(?:first|second|third)\s+)?(?:implement(?:er|or)[’']?s?\s+drafts?|final(?:\s+(?:specification|version))?|drafts?)(?:\s+\d+)?", label, re.I))
+
+
+def format_label(label):
+    return label.lower() in {'html', 'spec', 'specification', 'read', 'link'}
+
+
+def family(name):
+    # Compare editions only after a complete filename suffix, never by fuzzy name.
+    return re.sub(r'-(?:ID\d+|final|errata\d+|\d+)$', '', name, flags=re.I)
+
+
+def item(node):
+    parent, paragraph = node.parent, None
+    while parent:
+        if parent.tag in {'li', 'tr'}:
+            return parent
+        if paragraph is None and parent.tag == 'p':
+            paragraph = parent
+        parent = parent.parent
+    return paragraph or node
 
 
 def parse_listing(html):
     parser = ListingParser()
     parser.feed(html)
-    result, heading = {}, ''
+    ids = {node.attrs['id']: node for node in nodes(parser.root) if 'id' in node.attrs}
+    headings, groups = {}, {}
+
+    def section_stage(node):
+        parent = node.parent
+        while parent:
+            # Elementor renders accordion headings as links. Their scope is only
+            # the region they label; never leak a sibling's Final into another group.
+            labels = ' '.join(text(ids[key]) for key in parent.attrs.get('aria-labelledby', '').split() if key in ids)
+            publication = stage(labels)
+            if publication != 'Other':
+                return publication
+            if parent.tag == 'table':
+                captions = [child for child in parent.children if isinstance(child, Node) and child.tag == 'caption']
+                if captions:
+                    return stage(text(captions[0]))
+            parent = parent.parent
+        return next((stage(headings[level]) for level in sorted(headings, reverse=True) if stage(headings[level]) != 'Other'), 'Other')
 
     def walk(node):
-        nonlocal heading
-        if node.tag in {'h1', 'h2', 'h3', 'h4', 'caption'}:
-            heading = node.text()
+        if node.tag in {'script', 'style', 'nav', 'footer'}:
+            return
+        if re.fullmatch(r'h[1-6]', node.tag):
+            level = int(node.tag[1])
+            for old in list(headings):
+                if old >= level:
+                    del headings[old]
+            headings[level] = text(node)
         if node.tag == 'a':
             url = canonical(node.attrs.get('href', ''))
             if url:
-                context = node.parent
-                while context.parent and context.tag not in {'li', 'tr', 'p'}:
-                    context = context.parent
-                if context.tag not in {'li', 'tr', 'p'}:
-                    context = node
-                local = stage(context.text())
-                publication = local if local != 'Other' else stage(heading)
-                name = urlsplit(url).path.split('/')[-1][:-5]
-                revision = re.search(r'(\d+[_.]\d+(?:-\d+)?(?:-errata\d+)?)(?:-|$)', name) or re.search(r'-(\d+)$', name)
-                title = ' '.join(node.text().split())
-                if title.lower() in {'html', 'spec', 'specification', 'read', 'link'}:
-                    title = ' '.join(context.text().split())
-                record = {'url': url, 'title': title[:500] or name, 'stage': publication, 'revision': revision.group(1) if revision else '', 'listed': True}
-                if name not in result or result[name]['stage'] == 'Other':
-                    result[name] = record
+                context = item(node)
+                groups.setdefault(context, []).append({'node': node, 'url': url, 'label': text(node), 'section': section_stage(node)})
         for child in node.children:
             if isinstance(child, Node):
                 walk(child)
     walk(parser.root)
+
+    candidates, titles, item_titles = [], {}, {}
+    for context, links in groups.items():
+        main = next((node for node in nodes(context) if node.tag == 'a' and node.attrs.get('href') and item(node) is context), links[0]['node'])
+        primary = next((link for link in links if link['node'] is main), None)
+        # A named external main link may supply a title for an official edition,
+        # but references in its prose are not promoted to specifications.
+        title = text(main)
+        if primary and urlsplit(main.attrs.get('href', '')).fragment and re.fullmatch(r'\[.*\]', title):
+            primary = None
+        if version_label(title):
+            prefix = text(context).removesuffix(title).strip()
+            title = ''
+            if context.tag == 'li' and re.fullmatch(r'[–—-]?\s*(?:most recent|latest)', prefix, re.I):
+                siblings = [node for node in context.parent.children if isinstance(node, Node)]
+                position = siblings.index(context)
+                if position and siblings[position - 1].tag == 'li':
+                    title = item_titles.get(siblings[position - 1], '')
+        elif format_label(title):
+            title = text(context)
+        if title:
+            item_titles[context] = title
+        if primary and title:
+            name = urlsplit(primary['url']).path.split('/')[-1][:-5]
+            titles.setdefault(family(name), title)
+        for link in links:
+            if link is primary or version_label(link['label']) or format_label(link['label']):
+                # Other links in a specification's description are citations.
+                # They cannot supply titles or inherit the item's publication stage.
+                candidates.append((link, title))
+
+    result = {}
+    priority = {'Other': 0, 'Draft': 1, "Implementer's Draft": 2, 'Final': 3}
+    for link, title in candidates:
+        name = urlsplit(link['url']).path.split('/')[-1][:-5]
+        publication = stage(link['label'])
+        if publication == 'Other':
+            publication = link['section']
+        title = title or titles.get(family(name), name)
+        revision = re.search(r'(\d+[_.]\d+(?:-\d+)?(?:-errata\d+)?)(?:-|$)', name) or re.search(r'-(\d+)$', name)
+        record = {'url': link['url'], 'title': title[:500], 'stage': publication, 'revision': revision.group(1) if revision else '', 'listed': True}
+        if name not in result or priority[publication] > priority[result[name]['stage']]:
+            result[name] = record
     if not result:
         raise ValueError('No official specification links found; refusing an empty or changed listing')
     return result
@@ -216,7 +305,8 @@ def collect(root='.', http=None, limit=20):
 
     try:
         http.load_robots()
-        body, headers = http.get(LIST, state.get('listing'))
+        cached = state.get('listing') if state.get('listingParserVersion') == LISTING_PARSER_VERSION else None
+        body, headers = http.get(LIST, cached)
         if body is not None:
             entries = parse_listing(body.decode('utf-8'))
             for doc in state['documents'].values():
@@ -228,6 +318,7 @@ def collect(root='.', http=None, limit=20):
                 if metadata_changed:
                     state['documents'][name]['changedAt'] = stamp(http.clock())
             state['listing'] = headers
+            state['listingParserVersion'] = LISTING_PARSER_VERSION
         active = [(name, doc) for name, doc in state['documents'].items() if doc.get('listed')]
         # Unfetched documents first; oldest checked versions next. Daily bounded rotation.
         for name, doc in sorted(active, key=lambda item: (item[1].get('checkedAt', ''), item[0]))[:limit]:

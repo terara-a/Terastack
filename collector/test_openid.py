@@ -7,7 +7,7 @@ from email.message import Message
 from urllib.error import HTTPError
 from openid import Deferred, LIST, PoliteHTTP, collect, parse_listing
 
-# Deliberately synthetic HTML: live-site validation needs openid.net permission.
+# Synthetic discovery fixture; real-site structural regressions are covered below.
 HTML = '''<main><h2>Final Specifications</h2><ul>
 <li><a href="/specs/openid-connect-core-1_0.html">OpenID Connect Core</a></li>
 <li><a href="https://evil.example/specs/evil.html">Evil</a></li>
@@ -55,6 +55,55 @@ class OpenIDTests(unittest.TestCase):
         self.assertNotIn('#', rows['unknown-protocol-01']['url'])
         self.assertEqual(parse_listing('<h2>Final</h2><a href="/specs/one.html">One</a><h2>Draft</h2><a href="/specs/two.html">Two</a>')['two']['stage'], 'Draft')
         with self.assertRaises(ValueError): parse_listing('<h1>Access denied</h1>')
+
+    def test_real_listing_distinguishes_primary_editions_and_reference_links(self):
+        rows=parse_listing((Path(__file__).parent/'fixtures/openid-listing.html').read_text())
+        self.assertEqual(rows['openid-caep-specification-1_0']['stage'], "Implementer's Draft")
+        self.assertEqual(rows['openid-caep-specification-1_0']['title'], 'OpenID Continuous Access Evaluation Profile 1.0')
+        self.assertNotIn('openid-sse-framework-1_0-ID1', rows)
+        self.assertEqual(rows['openid-caep-1_0-final']['stage'], 'Final')
+        self.assertEqual(rows['openid-connect-self-issued-v2-1_0-ID1']['title'], 'Self-Issued OpenID Provider V2')
+        self.assertEqual(rows['oauth-v2-grant-management-ID1']['title'], 'Grant Management for OAuth 2.0')
+        self.assertEqual(rows['openid-connect-user-questioning-api-1_0-ID2']['title'], 'OpenID Connect User Questioning API')
+        self.assertTrue(all(d['title'] != 'Implementer’s Draft' for d in rows.values()))
+
+    def test_real_headings_scope_accordion_stages_and_plural_drafts(self):
+        rows=parse_listing((Path(__file__).parent/'fixtures/openid-listing.html').read_text())
+        self.assertEqual(rows['openid-authentication-2_0']['stage'], 'Final')
+        self.assertEqual(rows['openid-simple-registration-extension-1_1-01']['stage'], 'Draft')
+        self.assertEqual(rows['opaque-protocol-01']['stage'], 'Draft')
+        self.assertEqual(rows['openid-ida-verified-claims-1_0-errata1']['stage'], 'Other')
+        self.assertEqual(rows['openid-connect-token-bound-authentication-1_0']['url'], 'https://openid.net/specs/openid-connect-token-bound-authentication-1_0.html')
+
+    def test_citations_do_not_create_specs_even_without_fragments_or_with_external_main(self):
+        html='''<h2>Final Specifications</h2><ul>
+        <li><a href="/specs/main-1_0.html">Main</a> Uses <a href="/specs/reference.html">Reference framework</a></li>
+        <li><a href="https://example.com/editors-draft">External editor draft</a> references <a href="/specs/citation.html#section">Reference framework</a></li>
+        <li><a href="https://example.com/other-editor-draft">Other protocol</a> – <a href="/specs/other-ID1.html">Implementer's Draft</a></li>
+        </ul>'''
+        rows=parse_listing(html)
+        self.assertEqual(set(rows), {'main-1_0','other-ID1'})
+        self.assertEqual(rows['other-ID1']['title'], 'Other protocol')
+        self.assertEqual(rows['other-ID1']['stage'], "Implementer's Draft")
+
+    def test_unrecognized_orphan_edition_keeps_identity_without_guessing_a_neighbor_title(self):
+        rows=parse_listing('''<ul><li><a href="/specs/unrelated.html">Unrelated</a></li><li><a href="/specs/new-ID1.html">Implementer's Draft</a></li></ul>''')
+        self.assertEqual(rows['new-ID1']['title'], 'new-ID1')
+        self.assertEqual(rows['new-ID1']['stage'], "Implementer's Draft")
+
+    def test_unknown_stage_clears_final_and_nested_headings_keep_parent_stage(self):
+        rows=parse_listing('''<h2>Final Specifications</h2><p><a href="/specs/final.html">Final protocol</a></p><h2>Unclassified</h2><p><a href="/specs/unknown.html">Unknown protocol</a></p><h2>Drafts</h2><h3>New Working Group</h3><p><a href="/specs/draft.html">Protocol</a></p>''')
+        self.assertEqual(rows['unknown']['stage'], 'Other')
+        self.assertEqual(rows['draft']['stage'], 'Draft')
+
+    def test_parser_upgrade_refreshes_listing_instead_of_reusing_stale_metadata(self):
+        with tempfile.TemporaryDirectory() as root:
+            path=Path(root)/'catalog/openid.json';path.parent.mkdir()
+            path.write_text(json.dumps({'version':1,'documents':{},'listing':{'etag':'"old-parser"'}}))
+            http,opener,_=client([Response(b''),Response(HTML.encode()),Response(b'body')])
+            collect(root,http,limit=1)
+            self.assertNotIn('If-none-match',opener.calls[1][2])
+            self.assertEqual(json.loads(path.read_text())['listingParserVersion'],2)
 
     def test_pacing_start_jitter_robots_and_conditional_get(self):
         http, opener, _ = client([Response(b'User-agent: Terastack\nCrawl-delay: 12\n'), Response(HTML.encode(), headers={'ETag':'"index"'}), HTTPError(LIST, 304, '', Message(), io.BytesIO())])
