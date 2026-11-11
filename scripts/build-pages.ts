@@ -1,15 +1,13 @@
 import {readFile, readdir, mkdir, copyFile, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
-export function publicData(state: any, related: any, reports: any[], evaluation: any = null, reviewed: any = {}, candidates: any = {}, semantic: any = null) {
+export function publicData(state: any, reports: any[], reviewed: any = {}, candidates: any = {}, semantic: any = null) {
   if (state.version !== 2 || !state.index) throw new Error('Expected compact catalog v2');
   const counts = {total: 0, rfc: 0, draft: 0, relevant: 0, unrelated: 0, pending: 0};
-  for (const [name, row] of Object.entries(state.index) as [string, any][]) {
+  for (const name of Object.keys(state.index)) {
     counts.total++; if (/^rfc\d+$/.test(name)) counts.rfc++; else counts.draft++;
-    if (row[2] === true) counts.relevant++; else if (row[2] === false) counts.unrelated++; else counts.pending++;
   }
-  const legacy = Object.entries(related).filter(([name]) => /^(rfc\d+|draft-[a-z0-9-]+)$/.test(name) && state.index[name]?.[2] === true)
-    .map(([name, doc]: [string, any]) => ({name, type: name.startsWith('rfc') ? 'RFC' : 'Draft', rev: String(doc.rev ?? ''), title: String(doc.title ?? ''), reason: String(doc.reason ?? ''), url: `https://datatracker.ietf.org/doc/${name}/`}));
-  const merged = new Map(legacy.map(doc => [doc.name, {...doc, status:'candidate'}]));
+  const merged = new Map<string, {name:string;type:string;rev:string;title:string;reason:string;url:string;status:string}>();
+  let excluded = 0;
   for (const [name, doc] of Object.entries(candidates) as [string, any][]) {
     const row = state.index[name];
     if (!/^(rfc\d+|draft-[a-z0-9-]+)$/.test(name) || !row || (!name.startsWith('rfc') && (doc.rev !== row[0] || doc.time !== row[1]))) continue;
@@ -18,15 +16,16 @@ export function publicData(state: any, related: any, reports: any[], evaluation:
   for (const [name, doc] of Object.entries(reviewed) as [string, any][]) {
     if (!/^(rfc\d+|draft-[a-z0-9-]+)$/.test(name) || !state.index[name]) continue;
     if (!name.startsWith('rfc') && doc.rev !== state.index[name][0]) continue;
-    if (doc.status === 'excluded') { merged.delete(name); continue; }
+    if (doc.status === 'excluded') { merged.delete(name); excluded++; continue; }
     if (doc.status !== 'confirmed') continue;
     merged.set(name, {name,type:name.startsWith('rfc')?'RFC':'Draft',rev:String(doc.rev ?? ''),title:String(doc.title ?? ''),reason:String(doc.reason ?? ''),url:`https://datatracker.ietf.org/doc/${name}/`,status:'confirmed'});
   }
   const documents = [...merged.values()].sort((a,b) => a.status.localeCompare(b.status)*-1 || a.name.localeCompare(b.name));
-  const review = {confirmed:documents.filter(d=>d.status==='confirmed').length,candidates:documents.filter(d=>d.status==='candidate').length,screened:semantic?.screened ?? 0,unreviewed:counts.total-documents.filter(d=>d.status==='confirmed').length};
-  const daily = reports.map(report => ({at: report.started, changed: report.changedCount ?? 0, relevant: report.relevant?.length ?? 0, pending: report.pendingCount ?? null}))
+  const review = {confirmed:documents.filter(d=>d.status==='confirmed').length,candidates:documents.filter(d=>d.status==='candidate').length,screened:semantic?.screened ?? 0,unreviewed:counts.total-excluded-documents.filter(d=>d.status==='confirmed').length};
+  counts.relevant = documents.length; counts.unrelated = excluded; counts.pending = review.unreviewed;
+  const daily = reports.map(report => ({at: report.started, changed: report.changedCount ?? 0}))
     .filter(report => typeof report.at === 'string' && Number.isFinite(Date.parse(report.at))).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 30);
-  return {lastCollection: state.lastSuccess ?? null, counts, documents, daily, review, evaluationStatus: ['passed', 'failed', 'running'].includes(evaluation?.status) ? evaluation.status : 'not_run'};
+  return {lastCollection: state.lastSuccess ?? null, counts, documents, daily, review};
 }
 export async function buildPages(root = '.', output = 'dist') {
   const read = async (path: string, fallback: any) => {
@@ -34,12 +33,11 @@ export async function buildPages(root = '.', output = 'dist') {
     catch (error: any) { if (error.code !== 'ENOENT') throw error; return fallback; }
   };
   const state = await read('catalog/state.json', {version: 2, index: {}});
-  const related = await read('catalog/related.json', {});
   let names: string[];
   try { names = await readdir(join(root, 'reports/daily')); }
   catch (error: any) { if (error.code !== 'ENOENT') throw error; names = []; }
   const reports = await Promise.all(names.filter(name => name.endsWith('.json')).map(name => read(`reports/daily/${name}`, null)));
-  const data = publicData(state, related, reports, await read('reports/evaluation/latest.json', null), await read('catalog/reviewed.json', {}), await read('catalog/candidates.json', {}), await read('reports/semantic/progress.json', null));
+  const data = publicData(state, reports, await read('catalog/reviewed.json', {}), await read('catalog/candidates.json', {}), await read('reports/semantic/progress.json', null));
   const target = join(root, output); await mkdir(target, {recursive: true});
   for (const file of ['index.html', 'style.css', 'app.js']) await copyFile(join(root, 'site', file), join(target, file));
   await writeFile(join(target, 'data.json'), JSON.stringify(data) + '\n');

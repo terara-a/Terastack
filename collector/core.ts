@@ -1,5 +1,4 @@
 export type Document = {name: string; rev: string; title: string; abstract?: string; time: string; resource_uri: string};
-export type Decision = {relevant: boolean | null; reason: string};
 export const API = 'https://datatracker.ietf.org';
 export async function getJson(url: string, fetcher = fetch): Promise<any> {
   let last: unknown;
@@ -33,7 +32,6 @@ export async function* documents(since?: string, fetcher = fetch, type: 'draft' 
     url = page.meta.next;
   }
 }
-export function revisionKey(doc: Document): string { return `${doc.name}-${doc.rev}`; }
 export function overlap(lastSuccess?: string): string | undefined {
   return lastSuccess ? new Date(Date.parse(lastSuccess) - 3 * 86400000).toISOString() : undefined;
 }

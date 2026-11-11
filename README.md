@@ -27,7 +27,6 @@ Pages では次を区別します。
 ```text
 mode: backfill
 limit: 2000
-max_usd: 空欄
 ```
 
 既定の無料 CPU モデルで、未処理・更新された文書を最大2,000件処理します。処理済みのフィンガープリントをスキップするため、同じ指定で繰り返し実行できます。既存の未マージデータも引き継ぎます。
@@ -37,7 +36,6 @@ max_usd: 空欄
 ```text
 mode: backfill
 limit: 64
-max_usd: 空欄
 ```
 
 ### 引数一覧
@@ -47,9 +45,7 @@ max_usd: 空欄
 | `mode` | `evaluate` | 小規模な精度評価だけを実行。手動実行画面の既定値 |
 | `mode` | `backfill` | 既存文書の候補抽出を分割して進める |
 | `mode` | `daily` | メタデータ収集後、新規・更新を優先して候補抽出 |
-| `mode` | `models` | 従来のモデル API の一覧確認。ローカル候補抽出には不要 |
 | `limit` | 正の整数、または空欄 | `daily` / `backfill` の最大処理件数。空欄なら **2,000件** |
-| `max_usd` | 空欄でよい | 有料 API 用の累積予約額上限。CPU 処理では使用しない |
 
 `evaluate` は文書の初回分を進めません。初回処理には `backfill` を選んでください。モデルや評価セットが変わると、候補抽出前に必要な評価を自動実行します。
 
@@ -93,12 +89,10 @@ max_usd: 空欄
 | `catalog/semantic-index.json` | 処理済み文書のフィンガープリントとスコアなど |
 | `reports/daily/` | メタデータ収集で索引に変更があった実行の集計 |
 | `reports/semantic/` | CPU モデルの評価・進捗・監査サンプル |
-| `catalog/related.json`、`reports/evaluation/`、`reports/classification/` | 従来の API 分類の結果。既定の CPU 処理とは別 |
-| `catalog/classification-budget.json` | 従来の有料 API の累積予約台帳。実際の請求額ではない |
 
 概要・本文・埋め込みベクトルの全件複製は Git に保存しません。RFC は最大番号だけを取得境界にせず、番号順と公開順の違いによる取りこぼしを避けます。ドラフト収集は通常3日の重複期間を含む差分取得で、UTC の日曜日には全件照合します（定期実行では日本時間の月曜日）。
 
-旧形式の移行は `node collector/migrate.ts` で行えます。現在のファイルは軽量化されていますが、過去の大きなデータは Git 履歴に残ります。
+収集索引は compact-v2 形式を使用します。旧形式の自動移行は行いません。移行済みの索引・CPU 候補抽出の進捗は保持しており、再収集や再分類は不要です。過去の大きなデータや廃止した API 処理の記録は Git 履歴に残ります。
 
 ## 開発とローカル実行
 
@@ -126,7 +120,7 @@ npm run build:pages
 python3 -m http.server 8000 --directory dist
 ```
 
-`site/` が HTML/CSS/JavaScript、`scripts/build-pages.ts` が公開用スナップショットの生成処理です。`dist/` の静的ファイルだけを配信し、全件索引・費用台帳・キー・生の API 応答は配信しません。相対パスのため `/Terastack/` のプロジェクトページでも動きます。
+`site/` が HTML/CSS/JavaScript、`scripts/build-pages.ts` が公開用スナップショットの生成処理です。`dist/` の静的ファイルだけを配信し、全件索引・キー・生の API 応答は配信しません。相対パスのため `/Terastack/` のプロジェクトページでも動きます。
 
 新しいリポジトリで公開する場合は **Settings → Pages → Source = GitHub Actions** に設定します。コード PR ではビルドだけを検証し、main へのマージ後に公開します。手動で再公開する場合は **GitHub Pages** を main で実行します。
 
@@ -140,9 +134,9 @@ npm run dev
 
 Workers 版は Fetch / Web Crypto を使用します。Cloudflare へのデプロイや workerd 上での実動作検証は未実施です。
 
-## 有料 API を明示的に使う場合
+## 設定不要になった項目
 
-Variables に `CLASSIFICATION_ENGINE=api` を設定した場合だけ、従来のモデル API 分類を使用します。キー・モデル・単価・累積予約額の設定は [API 分類の運用手順](docs/classification.md) を参照してください。通常の運用では設定不要です。
+有料モデル API 分類は廃止し、CPU 候補抽出だけを使用します。`CLASSIFIER_*` の Variables／Secrets と `CLASSIFICATION_ENGINE` は削除できます。GHA の `models` モード・`max_usd` 引数は廃止しました。実行時は `mode` と `limit` だけ指定してください。
 
 ## 未実装の範囲
 

@@ -34,6 +34,6 @@ fetch('./data.json').then(response => { if (!response.ok) throw new Error('Fetch
   $('breakdown').textContent = `RFC ${number(data.counts.rfc)} / Draft ${number(data.counts.draft)}`;
   $('freshness').textContent = `最終収集：${date(data.lastCollection)}（日本時間）`;
   $('classification').textContent = data.review ? `候補抽出済み ${number(data.review.screened)} 件。低スコアも未確認として保持` : '未判定・判断困難な文書';
-  for (const report of data.daily) { const tr = element('tr',''); tr.append(element('td',date(report.at)),element('td',number(report.changed)),element('td',number(report.relevant))); $('updates-body').append(tr); }
+  for (const report of data.daily) { const tr = element('tr',''); tr.append(element('td',date(report.at)),element('td',number(report.changed))); $('updates-body').append(tr); }
   $('no-updates').hidden = data.daily.length > 0; render();
 }).catch(() => { $('error').hidden = false; $('error').textContent = 'データを読み込めませんでした。時間をおいて再読み込みするか、GitHub のカタログを確認してください。'; $('freshness').textContent = '収集状況を表示できません'; });

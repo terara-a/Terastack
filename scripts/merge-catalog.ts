@@ -3,9 +3,9 @@ import {mkdtemp, mkdir, writeFile, cp, rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join, dirname} from 'node:path';
 import {buildPages} from './build-pages.ts';
-const catalogFiles = new Set(['catalog/state.json','catalog/related.json','catalog/candidates.json','catalog/semantic-index.json','catalog/classification-budget.json']);
+const catalogFiles = new Set(['catalog/state.json','catalog/candidates.json','catalog/semantic-index.json']);
 export function allowedPath(path: string): boolean {
-  return catalogFiles.has(path) || /^reports\/(daily|classification)\/[0-9TZ.:-]+\.json$/.test(path) || /^reports\/evaluation\/latest\.json$/.test(path) || /^reports\/semantic\/(evaluation|progress)\.json$/.test(path);
+  return catalogFiles.has(path) || /^reports\/daily\/[0-9TZ.:-]+\.json$/.test(path) || /^reports\/semantic\/(evaluation|progress)\.json$/.test(path);
 }
 export function eligible(pr: any, repository: string): void {
   if (pr.state !== 'open' || pr.draft || pr.base?.ref !== 'main' || pr.head?.ref !== 'standards/daily' || pr.head?.repo?.full_name !== repository || pr.user?.login !== 'github-actions[bot]' || pr.user?.type !== 'Bot') throw new Error('Only same-repository, bot-generated standards/daily data PRs are eligible');
@@ -22,10 +22,9 @@ export function validateData(path: string, value: any): void {
     if (typeof value.signature !== 'string' || !value.entries) throw new Error('Invalid semantic index');
     for (const row of Object.values(value.entries) as any[]) if (!Array.isArray(row) || typeof row[0] !== 'string' || !Number.isFinite(row[1])) throw new Error('Invalid semantic score');
   }
-  if (path === 'catalog/candidates.json' || path === 'catalog/related.json') {
+  if (path === 'catalog/candidates.json') {
     for (const doc of Object.values(value) as any[]) if (!doc || typeof doc.title !== 'string' || typeof doc.rev !== 'string' || typeof doc.reason !== 'string') throw new Error(`Invalid document: ${path}`);
   }
-  if (path === 'catalog/classification-budget.json' && (!Number.isFinite(value.reservedUSD) || value.reservedUSD < 0 || !Number.isInteger(value.calls) || value.calls < 0)) throw new Error('Invalid budget');
   if (path === 'reports/semantic/evaluation.json' && (value.status !== 'passed' || value.metrics?.recall < .9 || value.metrics?.precision < .5 || !Number.isFinite(value.metrics?.recall) || !Number.isFinite(value.metrics?.precision))) throw new Error('Semantic evaluation not passed');
 }
 const git = (...args: string[]) => execFileSync('git',args,{encoding:'utf8',maxBuffer:64*1024*1024});

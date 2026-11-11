@@ -5,16 +5,12 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'models lists available models without inference; evaluate before classifying'
+        description: 'Evaluate, collect daily updates, or resume initial candidate discovery'
         type: choice
-        options: [models, evaluate, daily, backfill]
+        options: [evaluate, daily, backfill]
         default: evaluate
       limit:
-        description: 'Maximum documents (backfill default 500, daily default 30)'
-        type: string
-        default: ''
-      max_usd:
-        description: 'Cumulative reservation cap in USD, including past runs; blank uses repository variable or $0.10'
+        description: 'Maximum documents for daily/backfill; blank defaults to 2000'
         type: string
         default: ''
 permissions:
@@ -29,33 +25,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 180
     env:
-      CLASSIFICATION_ENGINE: ${{ vars.CLASSIFICATION_ENGINE || 'local' }}
       FASTEMBED_CACHE_PATH: .cache/fastembed
       HF_HUB_DISABLE_TELEMETRY: '1'
       CLASSIFY_MODE: ${{ inputs.mode || 'daily' }}
       CLASSIFY_LIMIT: ${{ inputs.limit }}
-      CLASSIFIER_SELECTION: ${{ vars.CLASSIFIER_SELECTION || 'auto' }}
-      CLASSIFIER_MODEL_PROFILES: ${{ vars.CLASSIFIER_MODEL_PROFILES }}
-      CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
-      CLASSIFIER_MODEL: ${{ vars.CLASSIFIER_MODEL }}
-      CLASSIFIER_API_KEY: ${{ (inputs.mode == 'models' || vars.CLASSIFICATION_ENGINE == 'api') && secrets.CLASSIFIER_API_KEY || '' }}
-      CLASSIFIER_INPUT_USD_PER_MILLION: ${{ vars.CLASSIFIER_INPUT_USD_PER_MILLION }}
-      CLASSIFIER_OUTPUT_USD_PER_MILLION: ${{ vars.CLASSIFIER_OUTPUT_USD_PER_MILLION }}
-      CLASSIFIER_MAX_USD: ${{ inputs.max_usd || vars.CLASSIFIER_MAX_USD || '0.10' }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
-      # Respect the selected manual ref; scheduled runs use main. Carry only pending data forward.
-      - name: Restore pending catalog changes
-        if: env.CLASSIFY_MODE != 'models'
+      - name: Restore pending generated data
         shell: bash
         run: |
           if git ls-remote --exit-code --heads origin standards/daily >/dev/null; then
             git fetch origin standards/daily
             if ! git merge-base --is-ancestor FETCH_HEAD HEAD; then
-              for path in catalog/state.json catalog/related.json catalog/classification-budget.json catalog/candidates.json catalog/semantic-index.json reports; do
+              for path in catalog/state.json catalog/candidates.json catalog/semantic-index.json reports/daily reports/semantic; do
                 if git cat-file -e "FETCH_HEAD:$path" 2>/dev/null; then
                   git restore --source=FETCH_HEAD -- "$path"
                 fi
@@ -66,56 +51,37 @@ jobs:
         with:
           node-version: '24'
       - uses: actions/setup-python@v5
-        if: env.CLASSIFICATION_ENGINE == 'local' && env.CLASSIFY_MODE != 'models'
         with:
           python-version: '3.12'
           cache: pip
           cache-dependency-path: semantic/requirements.txt
       - uses: actions/cache@v4
-        if: env.CLASSIFICATION_ENGINE == 'local' && env.CLASSIFY_MODE != 'models'
         with:
           path: .cache/fastembed
           key: fastembed-${{ runner.os }}-${{ hashFiles('semantic/requirements.txt', 'semantic/config.json') }}
       - run: python -m pip install -r semantic/requirements.txt
-        if: env.CLASSIFICATION_ENGINE == 'local' && env.CLASSIFY_MODE != 'models'
       - run: python -m unittest discover -s semantic -p 'test_*.py'
-        if: env.CLASSIFICATION_ENGINE == 'local' && env.CLASSIFY_MODE != 'models'
       - run: npm test
       - run: npm run test:merge-catalog
       - run: npm run test:pages
-      - name: Compact legacy data if present
-        if: env.CLASSIFY_MODE != 'models'
-        run: |
-          if test -f catalog/state.json; then node collector/migrate.ts; fi
       - run: npm run collect
         if: env.CLASSIFY_MODE == 'daily'
-      - name: Evaluate or classify
+      - name: Evaluate or discover candidates
         id: classify
         continue-on-error: true
-        run: |
-          if test "$CLASSIFY_MODE" = models; then
-            npm run check:models
-          elif test "$CLASSIFICATION_ENGINE" = local; then
-            python semantic/pipeline.py --mode "$CLASSIFY_MODE" --limit "${CLASSIFY_LIMIT:-2000}"
-          elif test "$CLASSIFY_MODE" = evaluate; then
-            npm run evaluate
-          else
-            npm run classify
-          fi
+        run: python semantic/pipeline.py --mode "$CLASSIFY_MODE" --limit "${CLASSIFY_LIMIT:-2000}"
       - uses: actions/upload-artifact@v4
-        if: always() && env.CLASSIFY_MODE != 'models'
+        if: always()
         continue-on-error: true
         with:
-          name: classification-checkpoint-${{ github.run_id }}
+          name: discovery-checkpoint-${{ github.run_id }}
           path: |
             catalog/
-            reports/evaluation/
-            reports/classification/
+            reports/daily/
             reports/semantic/
           if-no-files-found: ignore
       - uses: peter-evans/create-pull-request@v7
         id: catalog_pr
-        if: env.CLASSIFY_MODE != 'models'
         with:
           branch: standards/daily
           base: main
@@ -123,24 +89,19 @@ jobs:
           commit-message: 'Update standards catalog'
           body: 'Generated discovery data only. Semantic candidates are unreviewed and can be published automatically after validation. Confirmed/excluded decisions in catalog/reviewed.json and code/rules always require manual review.'
           add-paths: |
-            catalog/
-            reports/
+            catalog/state.json
+            catalog/candidates.json
+            catalog/semantic-index.json
+            reports/daily/
+            reports/semantic/
       - name: Validate and merge generated data
         if: github.ref == 'refs/heads/main' && steps.classify.outcome == 'success' && steps.catalog_pr.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ github.token }}
           CATALOG_PR_NUMBER: ${{ steps.catalog_pr.outputs.pull-request-number }}
         run: node scripts/merge-catalog.ts
-      - name: Report model failure after preserving budget and completed batches
+      - name: Report discovery failure after preserving checkpoints
         if: steps.classify.outcome == 'failure'
         run: |
-          if test "$CLASSIFICATION_ENGINE" != local && test "$CLASSIFY_MODE" = evaluate && test -f reports/evaluation/latest.json; then
-            node --input-type=module - <<'JS'
-          import {readFileSync, appendFileSync} from 'node:fs';
-          const report = JSON.parse(readFileSync('reports/evaluation/latest.json', 'utf8'));
-          const summary = JSON.stringify({status: report.status, error: report.error, metrics: report.metrics}, null, 2);
-          console.error(summary);
-          if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `### Evaluation failed\n\n\`\`\`json\n${summary}\n\`\`\`\n`);
-          JS
-          fi
+          echo 'CPU candidate discovery failed. Inspect the preceding step and reports/semantic; saved data has not been auto-merged.'
           exit 1
