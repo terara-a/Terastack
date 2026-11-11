@@ -1,0 +1,19 @@
+{
+  "model": "BAAI/bge-small-en-v1.5",
+  "version": "auth-semantic-v1",
+  "positive": [
+    "A requester proves its identity or possession of a credential to a service.",
+    "An owner grants, delegates or restricts a client's permission to access a protected resource.",
+    "A service checks a signed token, certificate, capability or ticket before allowing an operation.",
+    "A protocol issues, binds, revokes or exchanges credentials and access rights.",
+    "Remote attestation establishes whether a device can be trusted for an access decision.",
+    "An application establishes authenticated sessions or verifies signatures on requests."
+  ],
+  "negative": [
+    "Routing packets and choosing network paths between autonomous systems.",
+    "Encoding, compressing and transferring media or general application data.",
+    "Clock synchronization and network performance measurement.",
+    "Allocating addresses, resolving ordinary domain names and configuring network interfaces.",
+    "Document formatting, publication policy and registry administration without access decisions."
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "rfc9635": {"status":"confirmed","rev":"","title":"Grant Negotiation and Authorization Protocol (GNAP)","reason":"権限の付与・交渉を定義する GNAP のコア仕様。"},
+  "rfc9767": {"status":"confirmed","rev":"","title":"Grant Negotiation and Authorization Protocol Resource Server Connections","reason":"GNAP のリソースサーバーと認可サーバーの接続。"},
+  "rfc7636": {"status":"confirmed","rev":"","title":"Proof Key for Code Exchange by OAuth Public Clients","reason":"認可コード横取りへの対策となる PKCE。"},
+  "rfc7519": {"status":"confirmed","rev":"","title":"JSON Web Token (JWT)","reason":"署名付きクレームなどに用いる JWT。"},
+  "rfc8725": {"status":"confirmed","rev":"","title":"JSON Web Token Best Current Practices","reason":"JWT を安全に利用・検証するための指針。"},
+  "rfc9449": {"status":"confirmed","rev":"","title":"OAuth 2.0 Demonstrating Proof of Possession (DPoP)","reason":"アクセストークンを送信者の鍵へ束縛する仕組み。"},
+  "rfc9700": {"status":"confirmed","rev":"","title":"Best Current Practice for OAuth 2.0 Security","reason":"OAuth 2.0 のセキュリティ指針。"},
+  "rfc9421": {"status":"confirmed","rev":"","title":"HTTP Message Signatures","reason":"HTTP メッセージの署名と検証を定義。"}
+}

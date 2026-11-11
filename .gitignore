@@ -4,3 +4,7 @@ node_modules/
 .env
 
 dist/
+
+.cache/
+.venv-semantic/
+__pycache__/
