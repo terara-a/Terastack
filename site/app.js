@@ -20,15 +20,6 @@ function render() {
 }
 for (const id of ['search','type','review']) $(id).addEventListener('input', () => { page = 0; if (snapshot) render(); });
 $('previous').addEventListener('click', () => { page--; render(); }); $('next').addEventListener('click', () => { page++; render(); });
-$('pkce').addEventListener('submit', async event => {
-  event.preventDefault();
-  const verifier = $('verifier').value;
-  if (!/^[A-Za-z0-9._~-]{43,128}$/.test(verifier)) { $('challenge').textContent = '使用できる文字と長さを確認してください。'; return; }
-  try {
-    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
-    $('challenge').textContent = btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-  } catch { $('challenge').textContent = 'このブラウザでは計算できません。HTTPS で開いてください。'; }
-});
 fetch('./data.json').then(response => { if (!response.ok) throw new Error('Fetch failed'); return response.json(); }).then(data => {
   snapshot = data; $('total').textContent = number(data.counts.total); $('relevant').textContent = data.review ? `${number(data.review.confirmed)} / ${number(data.review.candidates)}` : number(data.counts.relevant); $('pending').textContent = number(data.review?.unreviewed ?? data.counts.pending);
   $('breakdown').textContent = `RFC ${number(data.counts.rfc)} / Draft ${number(data.counts.draft)}`;

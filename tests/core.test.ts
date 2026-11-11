@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {documents, overlap} from '../collector/core.ts';
-import worker, {challenge} from '../src/worker.ts';
+import {challenge} from '../site/samples/pkce/protocol.js';
 test('all-topic discovery follows pagination and retains unknown protocol names', async () => {
   const calls: string[] = [];
   const fake = async (url: any) => {
@@ -25,13 +25,7 @@ test('RFC 7636 appendix B PKCE vector', async () => {
   assert.equal(await challenge('dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk'), 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM');
   await assert.rejects(challenge('too-short'));
 });
-test('Worker functional request and invalid verifier', async () => {
-  assert.equal((await worker.fetch(new Request('https://example.test/health'))).status, 200);
-  const response = await worker.fetch(new Request('https://example.test/examples/pkce', {method: 'POST', body: JSON.stringify({verifier: 'a'.repeat(43)})}));
-  assert.equal(response.status, 200);
-  assert.equal((await response.json() as any).code_challenge_method, 'S256');
-  assert.equal((await worker.fetch(new Request('https://example.test/examples/pkce', {method: 'POST', body: '{}'}))).status, 400);
-});
+
 
 import {empty, ingest, encode} from '../collector/state.ts';
 import {collect} from '../collector/run.ts';
