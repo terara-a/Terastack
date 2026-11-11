@@ -7,6 +7,7 @@ from pathlib import Path
 import random
 import time
 import urllib.request
+import urllib.parse
 
 ROOT = Path(__file__).resolve().parents[1]
 API = 'https://datatracker.ietf.org'
@@ -96,6 +97,14 @@ def process_batch(docs, model, config, threshold, progress, candidates, scorer=s
         else:
             candidates.pop(name,None)
 
+def priorities(index, entries, limit):
+    missing=set(index)-set(entries)
+    fresh=[name for name,row in index.items() if len(row)>5 and row[5] and (name in missing or entries[name][2:]!=row[:2])]
+    fresh.sort(key=lambda name:index[name][5],reverse=True)
+    tail=len(missing)<=2000
+    names=list(dict.fromkeys(fresh+sorted(missing)))[:limit] if tail else fresh[:min(200,limit)]
+    return names,tail
+
 def run(mode, limit, root=ROOT):
     if limit <= 0:
         raise ValueError('Negative processing limit')
@@ -133,17 +142,21 @@ def run(mode, limit, root=ROOT):
     # Read every document's metadata; no keyword/WG exclusion. Skip already-scored fingerprints.
     # Bound CPU work per run, checkpoint every 64 documents and resume next time.
     try:
-        # Prioritize a bounded number of newly discovered/revised identities.
-        fresh=[name for name,row in index.items() if len(row)>5 and row[5] and (name not in state['entries'] or state['entries'][name][2:]!=row[:2])]
-        fresh.sort(key=lambda name:index[name][5],reverse=True)
-        for name in fresh[:min(200,limit)]:
-            page=request(f'{API}/api/v1/doc/document/?name={name}')
-            doc=next(d for d in page['objects'] if d['name']==name)
+        # Bulk pages can omit identities; finish the small remainder with exact-name lookups.
+        names,tail=priorities(index,state['entries'],limit)
+        for name in names:
+            page=request(f'{API}/api/v1/doc/document/?name={urllib.parse.quote(name,safe="")}')
+            doc=next((d for d in page['objects'] if d['name']==name),None)
+            if doc is None:
+                raise ValueError(f'Metadata not found for indexed document: {name}')
             batch.append(doc)
+            if len(batch)>=64 or processed+len(batch)>=limit:
+                process_batch(batch,model,config,report['threshold'],state['entries'],candidates)
+                processed+=len(batch); batch=[]; checkpoint()
         if batch:
             process_batch(batch,model,config,report['threshold'],state['entries'],candidates)
             processed+=len(batch); batch=[]; checkpoint()
-        for kind in ['rfc','draft']:
+        for kind in ([] if tail else ['rfc','draft']):
             if processed>=limit:
                 break
             for doc in documents(kind):
@@ -168,7 +181,7 @@ def run(mode, limit, root=ROOT):
         # Reproducible audit sample of low-scoring documents; never label them unrelated.
         low=sorted(name for name,row in state['entries'].items() if row[1]<report['threshold'])
         sample=random.Random(at[:10]).sample(low,min(20,len(low)))
-        save(root/'reports/semantic/progress.json',{'at':at,'processed':processed,'screened':len(state['entries']),'total':len(index),'candidates':len(candidates),'lowScoreAuditSample':sample,'model':config['model']})
+        save(root/'reports/semantic/progress.json',{'at':at,'processed':processed,'screened':len(state['entries']),'total':len(index),'remainingCount':len(set(index)-set(state['entries'])),'remainingSample':sorted(set(index)-set(state['entries']))[:20],'candidates':len(candidates),'lowScoreAuditSample':sample,'model':config['model']})
     print(f'Scored {processed}; screened {len(state["entries"])}/{len(index)}; candidates {len(candidates)}')
 
 if __name__=='__main__':
