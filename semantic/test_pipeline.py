@@ -32,10 +32,50 @@ class PipelineTests(unittest.TestCase):
         self.assertNotIn(doc['name'],candidates)
         self.assertIn(doc['name'],progress)
         self.assertNotEqual(first,progress[doc['name']][0])
-    def test_fixture_has_fifty_cases_and_separate_splits(self):
+    def test_fixture_has_separate_calibration_regression_and_holdout_and_separate_splits(self):
         cases=json.loads((Path(__file__).parents[1]/'evaluation/semantic-cases.json').read_text())
         self.assertEqual(len(cases),74)
         self.assertEqual(len({c['name'] for c in cases}),74)
         self.assertEqual({c['split'] for c in cases},{'calibration','regression','test'})
         self.assertEqual(sum(c['expected'] for c in cases),37)
+    def test_checkpoint_resumes_and_remote_failure_preserves_progress(self):
+        import tempfile
+        import types
+        import sys
+        from unittest.mock import patch
+        import pipeline
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            (root/'semantic').mkdir(); (root/'evaluation').mkdir(); (root/'catalog').mkdir()
+            config={'model':'fake','positive':[],'negative':[]}
+            fixtures=[]
+            pipeline.save(root/'semantic/config.json',config)
+            pipeline.save(root/'evaluation/semantic-cases.json',fixtures)
+            pipeline.save(root/'reports/semantic/evaluation.json',{'status':'passed','signature':identity(config,fixtures),'threshold':0.2})
+            docs=[{'name':'draft-'+str(i),'rev':'00','time':'now','title':'Test','abstract':'Access'} for i in range(3)]
+            pipeline.save(root/'catalog/state.json',{'index':{d['name']:['00','now',None] for d in docs}})
+            original=pipeline.process_batch
+            def batch(*args):
+                return original(*args,scorer=lambda model,documents,config:[0.3]*len(documents))
+            def source(kind):
+                return iter(docs) if kind=='rfc' else iter([])
+            with patch.dict(sys.modules,{'fastembed':types.SimpleNamespace(TextEmbedding=lambda **kw:None)}),patch.object(pipeline,'documents',source),patch.object(pipeline,'process_batch',batch):
+                pipeline.run('backfill',1,root)
+                first=json.loads((root/'catalog/semantic-index.json').read_text())
+                self.assertEqual(len(first['entries']),1)
+                pipeline.run('backfill',1,root)
+                second=json.loads((root/'catalog/semantic-index.json').read_text())
+                self.assertEqual(len(second['entries']),2)
+                def failed(kind):
+                    yield docs[2]
+                    raise RuntimeError('API unavailable')
+                with patch.object(pipeline,'documents',failed):
+                    with self.assertRaisesRegex(RuntimeError,'API unavailable'):
+                        pipeline.run('backfill',64,root)
+                preserved=json.loads((root/'catalog/semantic-index.json').read_text())
+                self.assertEqual(second,preserved)
+    def test_zero_limit_is_rejected_before_loading_model(self):
+        from pipeline import run
+        with self.assertRaises(ValueError):
+            run('backfill',0)
 if __name__=='__main__': unittest.main()
