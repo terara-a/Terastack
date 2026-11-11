@@ -36,7 +36,7 @@ python3 -m venv .venv-semantic
 python3 -m unittest discover -s semantic -p 'test_*.py'
 ```
 
-従来の有料APIを明示的に使う場合だけVariablesにCLASSIFICATION_ENGINE=apiを設定します。既定はlocalで、モデルAPIのSecretも渡しません。分類器の切替に関係なく既存の有料台帳は残します。
+有料モデル API の処理・設定・費用台帳は廃止しました。CPU 候補抽出だけを実行し、モデル API のキーは読み込みません。GHA への引数は mode と limit だけです。古い台帳や API 応答は Git 履歴で参照できます。
 
 初回50件では独立検証の再現率83%（2件の見落とし）で停止しました。そのフィードバックを受けてクラス境界の方法に修正したため、元の検証24件は回帰確認用へ移し、別の24件を新たな独立検証用として追加しました。元の検証結果だけを使って改善精度を主張しません。
 

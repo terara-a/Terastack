@@ -10,9 +10,6 @@
     "collect": "node collector/run.ts",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "classify": "node collector/classify.ts",
-    "evaluate": "node collector/evaluate.ts",
-    "check:models": "node scripts/check-models.ts",
     "build:pages": "node scripts/build-pages.ts",
     "test:pages": "node tests/pages.test.ts",
     "test:merge-catalog": "node tests/merge-catalog.test.ts"
