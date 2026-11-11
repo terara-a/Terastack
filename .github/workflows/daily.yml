@@ -54,7 +54,11 @@ jobs:
           if git ls-remote --exit-code --heads origin standards/daily >/dev/null; then
             git fetch origin standards/daily
             if ! git merge-base --is-ancestor FETCH_HEAD HEAD; then
-              git restore --source=FETCH_HEAD -- catalog reports
+              for path in catalog/state.json catalog/related.json catalog/classification-budget.json catalog/candidates.json catalog/semantic-index.json reports; do
+                if git cat-file -e "FETCH_HEAD:$path" 2>/dev/null; then
+                  git restore --source=FETCH_HEAD -- "$path"
+                fi
+              done
             fi
           fi
       - uses: actions/setup-node@v4
