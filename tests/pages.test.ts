@@ -49,3 +49,12 @@ test('reviewed specifications override candidates and excluded or stale revision
  const candidate=publicData(state,[],{}, {'draft-new':{rev:'02',time:'today',title:'Current candidate',reason:'Similar'}});
  assert.equal(candidate.documents[0].status,'candidate');
 });
+
+test('OpenID appears by source and publication stage without becoming human-confirmed',()=>{
+ const openid={lastSuccess:'2026-11-11T00:00:00Z',documents:{'new-01':{title:'Unknown OpenID protocol',url:'https://openid.net/specs/new-01.html',stage:"Implementer's Draft",revision:'01',listed:true,checkedAt:'2026-11-11T00:00:00Z',etag:'PRIVATE-CACHE'},retired:{listed:false}}};
+ const data=publicData({version:2,index:{rfc1:['','',null]}},[],{},{},null,openid);
+ assert.equal(data.counts.total,2);assert.equal(data.openidCount,1);assert.equal(data.review.confirmed,0);assert.equal(data.review.unreviewed,2);
+ assert.equal(data.documents[0].source,'OpenID Foundation');assert.equal(data.documents[0].stage,"Implementer's Draft");assert.equal(data.documents[0].status,'listed');
+ assert.equal(data.openidCollection,openid.lastSuccess);assert.ok(!JSON.stringify(data).includes('PRIVATE-CACHE'));
+ assert.throws(()=>publicData({version:2,index:{}},[],{},{},null,{documents:{evil:{listed:true,title:'bad',url:'javascript:alert(1)'}}}));
+});

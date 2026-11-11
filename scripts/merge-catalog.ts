@@ -3,7 +3,7 @@ import {mkdtemp, mkdir, writeFile, cp, rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join, dirname} from 'node:path';
 import {buildPages} from './build-pages.ts';
-const catalogFiles = new Set(['catalog/state.json','catalog/candidates.json','catalog/semantic-index.json']);
+const catalogFiles = new Set(['catalog/openid.json','catalog/state.json','catalog/candidates.json','catalog/semantic-index.json']);
 export function allowedPath(path: string): boolean {
   return catalogFiles.has(path) || /^reports\/daily\/[0-9TZ.:-]+\.json$/.test(path) || /^reports\/semantic\/(evaluation|progress)\.json$/.test(path);
 }
@@ -14,6 +14,15 @@ export function eligible(pr: any, repository: string): void {
 export function validateData(path: string, value: any): void {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error(`Expected object: ${path}`);
   if (value.status === 'failed' || value.status === 'running') throw new Error(`Unsuccessful report: ${path}`);
+  if (path === 'catalog/openid.json') {
+    if (value.version !== 1 || !value.documents || typeof value.documents !== 'object' || Array.isArray(value.documents)) throw new Error('Invalid OpenID catalog');
+    if (value.notBefore !== undefined && (!Number.isFinite(value.notBefore) || value.notBefore < 0)) throw new Error('Invalid OpenID cooldown');
+    if (value.lastSuccess !== undefined && !Number.isFinite(Date.parse(value.lastSuccess))) throw new Error('Invalid OpenID checkpoint');
+    for (const [name, doc] of Object.entries(value.documents) as [string, any][]) {
+      if (!/^[A-Za-z0-9_.-]+$/.test(name) || !doc || doc.url !== `https://openid.net/specs/${name}.html` || typeof doc.title !== 'string' || typeof doc.revision !== 'string' || typeof doc.listed !== 'boolean' || !['Final',"Implementer's Draft",'Draft','Other'].includes(doc.stage)) throw new Error('Invalid OpenID document');
+      if (doc.sha256 !== undefined && !/^[a-f0-9]{64}$/.test(doc.sha256)) throw new Error('Invalid OpenID content hash');
+    }
+  }
   if (path === 'catalog/state.json') {
     if (value.version !== 2 || !value.index || typeof value.index !== 'object') throw new Error('Invalid compact catalog');
     for (const row of Object.values(value.index) as any[]) if (!Array.isArray(row) || typeof row[0] !== 'string' || typeof row[1] !== 'string' || ![true,false,null].includes(row[2])) throw new Error('Invalid index row');

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {allowedPath,eligible,validateData} from '../scripts/merge-catalog.ts';
 const pr={state:'open',draft:false,base:{ref:'main',sha:'a'.repeat(40)},head:{ref:'standards/daily',sha:'b'.repeat(40),repo:{full_name:'terara-a/Terastack'}},user:{type:'Bot',login:'github-actions[bot]'}};
 test('only generated data paths are allowed, never code, reviews or rules',()=>{
- for(const path of ['catalog/state.json','catalog/candidates.json','catalog/semantic-index.json','reports/daily/2026-11-11.json','reports/semantic/progress.json']) assert.equal(allowedPath(path),true,path);
+ for(const path of ['catalog/openid.json','catalog/state.json','catalog/candidates.json','catalog/semantic-index.json','reports/daily/2026-11-11.json','reports/semantic/progress.json']) assert.equal(allowedPath(path),true,path);
  for(const path of ['catalog/reviewed.json','catalog/related.json','catalog/classification-budget.json','reports/evaluation/latest.json','reports/classification/2026-11-11.json','semantic/config.json','site/app.js','.github/workflows/daily.yml','reports/../../site/app.js','reports/semantic/script.json']) assert.equal(allowedPath(path),false,path);
 });
 test('only same-repository bot data PRs targeting main are eligible',()=>{
@@ -17,4 +17,12 @@ test('invalid scores, incomplete evaluation and failed reports require review',(
  assert.throws(()=>validateData('reports/semantic/evaluation.json',{status:'passed',metrics:{recall:.8,precision:1}}));
  assert.throws(()=>validateData('reports/semantic/progress.json',{status:'failed'}));
  assert.doesNotThrow(()=>validateData('reports/semantic/evaluation.json',{status:'passed',metrics:{recall:1,precision:.9}}));
+});
+
+test('OpenID generated data permits only official URLs, known stages and SHA-256 hashes',()=>{
+ const doc={title:'Unknown protocol',url:'https://openid.net/specs/unknown.html',stage:'Draft',revision:'01',listed:true,sha256:'a'.repeat(64)};
+ const data=(patch={})=>({version:1,documents:{unknown:{...doc,...patch}}});
+ assert.doesNotThrow(()=>validateData('catalog/openid.json',data()));
+ for(const patch of [{url:'https://evil.example/specs/unknown.html'},{stage:'confirmed'},{sha256:'invalid'},{listed:'yes'}]) assert.throws(()=>validateData('catalog/openid.json',data(patch)));
+ assert.throws(()=>validateData('catalog/openid.json',{version:1,documents:[],notBefore:'tomorrow'}));
 });

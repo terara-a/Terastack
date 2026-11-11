@@ -1,6 +1,6 @@
 # Terastack
 
-認証・認可に関係する RFC・Internet-Draft を追跡し、関連仕様とサンプル実装を蓄積するリポジトリです。
+認証・認可に関係する RFC・Internet-Draft・OpenID Foundationの公開仕様を追跡し、関連仕様とサンプル実装を蓄積するリポジトリです。
 
 **公開ページ：<https://terara-a.github.io/Terastack/>**
 
@@ -17,6 +17,12 @@ Pages では次を区別します。
 全候補をレビューする必要はありません。実装したい仕様を選ぶ時に、原文・対象版・現在の更新／廃止関係を確認します。気になる誤検出だけ個別に除外できます。
 
 成功した収集ジョブは生成データだけの PR を検証し、自動マージして Pages を更新します。コード・抽出ルール・評価用データ・人の確認結果は自動マージしません。
+
+## OpenID Foundation の仕様
+
+公式の[仕様一覧](https://openid.net/developers/specs/)も日次収集対象です。`daily` / `backfill` で一覧を確認し、仕様本文は最大20件ずつ巡回します。保存先は `catalog/openid.json`、Pagesでは「出典 → OpenID Foundation」で表示できます。公式一覧への掲載と、人による内容確認は区別します。
+
+リクエストは直列化し、起動時30〜180秒、各応答後5〜10秒の待ち時間を入れます。robots.txtの指定が長ければそちらを採用し、429 / 503のRetry-Afterは次回実行にも引き継ぎます。本文は保存せずハッシュとメタデータだけを保持します。[収集方法と初回確認の注意](docs/openid.md)を参照してください。
 
 ## GitHub Actions の実行方法
 
@@ -102,6 +108,7 @@ Node.js 24 以上。CPU 候補抽出には Python 3.12 を使用します。既�
 npm ci
 npm test
 npm run test:pkce
+npm run test:openid
 npm run test:pages
 npm run test:merge-catalog
 python3 -m unittest discover -s semantic -p 'test_*.py'

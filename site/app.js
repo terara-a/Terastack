@@ -4,8 +4,8 @@ const date = value => value && Number.isFinite(Date.parse(value)) ? new Intl.Dat
 let snapshot; let page = 0; const size = 25;
 function element(tag, text, className) { const node = document.createElement(tag); node.textContent = text; if (className) node.className = className; return node; }
 function render() {
-  const query = $('search').value.trim().toLowerCase(); const type = $('type').value; const review = $('review').value;
-  const filtered = snapshot.documents.filter(doc => (type === 'all' || type === doc.type) && (review === 'all' || review === doc.status) && `${doc.name} ${doc.title} ${doc.reason}`.toLowerCase().includes(query));
+  const query = $('search').value.trim().toLowerCase(); const type = $('type').value; const review = $('review').value; const source = $('source').value;
+  const filtered = snapshot.documents.filter(doc => (source === 'all' || source === doc.source) && (type === 'all' || type === doc.type) && (review === 'all' || review === doc.status) && `${doc.name} ${doc.title} ${doc.reason}`.toLowerCase().includes(query));
   const pages = Math.max(1, Math.ceil(filtered.length / size)); page = Math.min(page, pages - 1);
   $('results').textContent = `${number(filtered.length)} 件`; $('documents').replaceChildren();
   if (!filtered.length) {
@@ -13,17 +13,17 @@ function render() {
   }
   for (const doc of filtered.slice(page * size, (page + 1) * size)) {
     const article = element('article', '', 'document');
-    article.append(element('span', doc.status === 'confirmed' ? '確認済み' : '関連候補・未確認', 'badge'), element('span', doc.type, 'badge'), element('span', `${doc.name}${doc.rev ? ` / rev ${doc.rev}` : ''}`, 'document-name'));
-    const heading = element('h3', ''); const link = element('a', doc.title || doc.name); link.href = doc.url; heading.append(link); article.append(heading, element('p', doc.reason)); $('documents').append(article);
+    article.append(element('span', doc.status === 'confirmed' ? '確認済み' : doc.status === 'listed' ? '公式一覧掲載・未確認' : '関連候補・未確認', 'badge'), element('span', doc.source || 'IETF', 'badge'), element('span', doc.stage || doc.type, 'badge'), element('span', `${doc.name}${doc.rev ? ` / rev ${doc.rev}` : ''}`, 'document-name'));
+    const heading = element('h3', ''); const link = element('a', doc.title || doc.name); link.href = doc.url; heading.append(link); article.append(heading, element('p', doc.reason)); if (doc.source === 'OpenID Foundation') article.append(element('p', `本文の最終確認：${date(doc.checkedAt)}（日本時間）`, 'muted')); $('documents').append(article);
   }
   $('page').textContent = `${page + 1} / ${pages}`; $('previous').disabled = page === 0; $('next').disabled = page >= pages - 1;
 }
-for (const id of ['search','type','review']) $(id).addEventListener('input', () => { page = 0; if (snapshot) render(); });
+for (const id of ['search','type','review','source']) $(id).addEventListener('input', () => { page = 0; if (snapshot) render(); });
 $('previous').addEventListener('click', () => { page--; render(); }); $('next').addEventListener('click', () => { page++; render(); });
 fetch('./data.json').then(response => { if (!response.ok) throw new Error('Fetch failed'); return response.json(); }).then(data => {
   snapshot = data; $('total').textContent = number(data.counts.total); $('relevant').textContent = data.review ? `${number(data.review.confirmed)} / ${number(data.review.candidates)}` : number(data.counts.relevant); $('pending').textContent = number(data.review?.unreviewed ?? data.counts.pending);
-  $('breakdown').textContent = `RFC ${number(data.counts.rfc)} / Draft ${number(data.counts.draft)}`;
-  $('freshness').textContent = `最終収集：${date(data.lastCollection)}（日本時間）`;
+  $('breakdown').textContent = `RFC ${number(data.counts.rfc)} / Draft ${number(data.counts.draft)} / OpenID ${number(data.openidCount ?? 0)}`;
+  $('freshness').textContent = `最終収集（日本時間）：IETF ${date(data.lastCollection)} / OpenID ${date(data.openidCollection)}`;
   $('classification').textContent = data.review ? `候補抽出済み ${number(data.review.screened)} 件。低スコアも未確認として保持` : '未判定・判断困難な文書';
   for (const report of data.daily) { const tr = element('tr',''); tr.append(element('td',date(report.at)),element('td',number(report.changed))); $('updates-body').append(tr); }
   $('no-updates').hidden = data.daily.length > 0; render();

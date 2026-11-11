@@ -40,7 +40,7 @@ jobs:
           if git ls-remote --exit-code --heads origin standards/daily >/dev/null; then
             git fetch origin standards/daily
             if ! git merge-base --is-ancestor FETCH_HEAD HEAD; then
-              for path in catalog/state.json catalog/candidates.json catalog/semantic-index.json reports/daily reports/semantic; do
+              for path in catalog/openid.json catalog/state.json catalog/candidates.json catalog/semantic-index.json reports/daily reports/semantic; do
                 if git cat-file -e "FETCH_HEAD:$path" 2>/dev/null; then
                   git restore --source=FETCH_HEAD -- "$path"
                 fi
@@ -62,11 +62,17 @@ jobs:
       - run: python -m pip install -r semantic/requirements.txt
       - run: python -m unittest discover -s semantic -p 'test_*.py'
       - run: npm test
+      - run: npm run test:openid
       - run: npm run test:pkce
       - run: npm run test:merge-catalog
       - run: npm run test:pages
       - run: npm run collect
         if: env.CLASSIFY_MODE == 'daily'
+      - name: Collect OpenID official specifications
+        id: openid
+        if: env.CLASSIFY_MODE != 'evaluate'
+        continue-on-error: true
+        run: npm run collect:openid
       - name: Evaluate or discover candidates
         id: classify
         continue-on-error: true
@@ -90,19 +96,20 @@ jobs:
           commit-message: 'Update standards catalog'
           body: 'Generated discovery data only. Semantic candidates are unreviewed and can be published automatically after validation. Confirmed/excluded decisions in catalog/reviewed.json and code/rules always require manual review.'
           add-paths: |
+            catalog/openid.json
             catalog/state.json
             catalog/candidates.json
             catalog/semantic-index.json
             reports/daily/
             reports/semantic/
       - name: Validate and merge generated data
-        if: github.ref == 'refs/heads/main' && steps.classify.outcome == 'success' && steps.catalog_pr.outputs.pull-request-number != ''
+        if: github.ref == 'refs/heads/main' && steps.classify.outcome == 'success' && steps.openid.outcome != 'failure' && steps.catalog_pr.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ github.token }}
           CATALOG_PR_NUMBER: ${{ steps.catalog_pr.outputs.pull-request-number }}
         run: node scripts/merge-catalog.ts
       - name: Report discovery failure after preserving checkpoints
-        if: steps.classify.outcome == 'failure'
+        if: steps.classify.outcome == 'failure' || steps.openid.outcome == 'failure'
         run: |
-          echo 'CPU candidate discovery failed. Inspect the preceding step and reports/semantic; saved data has not been auto-merged.'
+          echo 'Standards collection or CPU discovery failed. Inspect the preceding steps; saved checkpoints have not been auto-merged.'
           exit 1
