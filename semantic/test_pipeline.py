@@ -57,23 +57,36 @@ class PipelineTests(unittest.TestCase):
             original=pipeline.process_batch
             def batch(*args):
                 return original(*args,scorer=lambda model,documents,config:[0.3]*len(documents))
+            def getter(url):
+                from urllib.parse import urlparse,parse_qs
+                name=parse_qs(urlparse(url).query)['name'][0]
+                return {'objects':[d for d in docs if d['name']==name]}
             def source(kind):
                 return iter(docs) if kind=='rfc' else iter([])
-            with patch.dict(sys.modules,{'fastembed':types.SimpleNamespace(TextEmbedding=lambda **kw:None)}),patch.object(pipeline,'documents',source),patch.object(pipeline,'process_batch',batch):
+            with patch.dict(sys.modules,{'fastembed':types.SimpleNamespace(TextEmbedding=lambda **kw:None)}),patch.object(pipeline,'request',getter),patch.object(pipeline,'documents',source),patch.object(pipeline,'process_batch',batch):
                 pipeline.run('backfill',1,root)
                 first=json.loads((root/'catalog/semantic-index.json').read_text())
                 self.assertEqual(len(first['entries']),1)
                 pipeline.run('backfill',1,root)
                 second=json.loads((root/'catalog/semantic-index.json').read_text())
                 self.assertEqual(len(second['entries']),2)
-                def failed(kind):
-                    yield docs[2]
+                def failed(url):
                     raise RuntimeError('API unavailable')
-                with patch.object(pipeline,'documents',failed):
+                with patch.object(pipeline,'request',failed):
                     with self.assertRaisesRegex(RuntimeError,'API unavailable'):
                         pipeline.run('backfill',64,root)
                 preserved=json.loads((root/'catalog/semantic-index.json').read_text())
                 self.assertEqual(second,preserved)
+    def test_tail_completion_includes_old_missing_names_without_discovery_timestamp(self):
+        from pipeline import priorities
+        index={'rfc10':['','',None],'draft-old':['00','old',None],'draft-new':['01','new',None,'','','2026-11-11']}
+        names,tail=priorities(index,{},2000)
+        self.assertTrue(tail)
+        self.assertEqual(set(names),set(index))
+        self.assertEqual(names[0],'draft-new')
+        names,tail=priorities(index,{name:['fp',0.1,*row[:2]] for name,row in index.items()},2000)
+        self.assertEqual(names,[])
+        self.assertTrue(tail)
     def test_zero_limit_is_rejected_before_loading_model(self):
         from pipeline import run
         with self.assertRaises(ValueError):
