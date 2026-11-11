@@ -25,12 +25,10 @@ test('RFC 7636 appendix B PKCE vector', async () => {
   assert.equal(await challenge('dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk'), 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM');
   await assert.rejects(challenge('too-short'));
 });
-test('Worker functional request and invalid verifier', async () => {
-  assert.equal((await worker.fetch(new Request('https://example.test/health'))).status, 200);
-  const response = await worker.fetch(new Request('https://example.test/examples/pkce', {method: 'POST', body: JSON.stringify({verifier: 'a'.repeat(43)})}));
-  assert.equal(response.status, 200);
-  assert.equal((await response.json() as any).code_challenge_method, 'S256');
-  assert.equal((await worker.fetch(new Request('https://example.test/examples/pkce', {method: 'POST', body: '{}'}))).status, 400);
+test('Worker routes health and requires configured persistent issuer', async () => {
+  assert.equal((await worker.fetch(new Request('https://example.test/health'))).status,200);
+  assert.equal((await worker.fetch(new Request('https://example.test/token',{method:'POST'}))).status,503);
+  assert.equal((await worker.fetch(new Request('https://example.test/examples/pkce'))).status,404);
 });
 
 import {empty, ingest, encode} from '../collector/state.ts';

@@ -1,4 +1,4 @@
-import {readFile, readdir, mkdir, copyFile, writeFile} from 'node:fs/promises';
+import {readFile, readdir, mkdir, copyFile, writeFile, cp} from 'node:fs/promises';
 import {join} from 'node:path';
 export function publicData(state: any, reports: any[], reviewed: any = {}, candidates: any = {}, semantic: any = null) {
   if (state.version !== 2 || !state.index) throw new Error('Expected compact catalog v2');
@@ -40,6 +40,9 @@ export async function buildPages(root = '.', output = 'dist') {
   const data = publicData(state, reports, await read('catalog/reviewed.json', {}), await read('catalog/candidates.json', {}), await read('reports/semantic/progress.json', null));
   const target = join(root, output); await mkdir(target, {recursive: true});
   for (const file of ['index.html', 'style.css', 'app.js']) await copyFile(join(root, 'site', file), join(target, file));
+  await cp(join(root,'site/samples'),join(target,'samples'),{recursive:true});
+  await copyFile(join(root,'src/worker.ts'),join(target,'samples/pkce/worker.ts.txt'));
+  await copyFile(join(root,'examples/pkce-client.mjs'),join(target,'samples/pkce/client-example.mjs.txt'));
   await writeFile(join(target, 'data.json'), JSON.stringify(data) + '\n');
   await writeFile(join(target, '.nojekyll'), '');
   console.log(`Built Pages: ${data.counts.total} indexed, ${data.documents.length} relevant; public JSON ${Buffer.byteLength(JSON.stringify(data))} bytes`);

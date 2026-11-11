@@ -1,3 +1,7 @@
 {
-  "name": "terastack", "main": "src/worker.ts", "compatibility_date": "2026-11-03"
+  "name": "terastack",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-11-03",
+  "durable_objects": {"bindings": [{"name": "PKCE_ISSUER", "class_name": "PKCEIssuer"}]},
+  "migrations": [{"tag": "v1", "new_sqlite_classes": ["PKCEIssuer"]}]
 }

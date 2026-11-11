@@ -101,6 +101,7 @@ Node.js 24 以上。CPU 候補抽出には Python 3.12 を使用します。既�
 ```sh
 npm ci
 npm test
+npm run test:pkce
 npm run test:pages
 npm run test:merge-catalog
 python3 -m unittest discover -s semantic -p 'test_*.py'
@@ -124,15 +125,23 @@ python3 -m http.server 8000 --directory dist
 
 新しいリポジトリで公開する場合は **Settings → Pages → Source = GitHub Actions** に設定します。コード PR ではビルドだけを検証し、main へのマージ後に公開します。手動で再公開する場合は **GitHub Pages** を main で実行します。
 
-### Workers サンプル
+### 認可コードグラント + PKCE
+
+サンプルはカタログと別ページです。
+
+- [フローを体験する](https://terara-a.github.io/Terastack/samples/pkce/)
+- [サンプルコード](https://terara-a.github.io/Terastack/samples/pkce/code.html)
+- [実行手順と省略範囲](docs/pkce.md)
+
+Pagesでは認可要求・コード発行・verifierによる交換・リソース取得をブラウザ内で再現します。実際のHTTP実行例はWorkers + Durable Objectsにあります。利用者は固定のデモ主体で、ログイン認証は省略しています。
 
 ```sh
 npm run dev
+# 別ターミナル
+node examples/pkce-client.mjs --approve
 ```
 
-`POST /examples/pkce` に JSON `{"verifier":"43〜128文字のRFC 7636 verifier"}` を送ると S256 challenge を返します。学習用のサンプルで、認可サーバー全体の実装ではありません。Pages にも入力を外部送信せず計算する PKCE デモがあります。
-
-Workers 版は Fetch / Web Crypto を使用します。Cloudflare へのデプロイや workerd 上での実動作検証は未実施です。
+旧 `/examples/pkce` のchallenge計算エンドポイントは廃止しました。Workersはローカルworkerd・SQLite Durable Objectsで検証し、Cloudflareへのデプロイは未実施です。
 
 ## 設定不要になった項目
 
@@ -140,4 +149,4 @@ Workers 版は Fetch / Web Crypto を使用します。Cloudflare へのデプ�
 
 ## 未実装の範囲
 
-仕様本文の版別保存・節単位の差分、RFC の更新／廃止関係や正誤表の自動照合、確認結果からの自動学習、JWT/DPoP 等の追加サンプル、日次のサンプルコード生成は未実装です。現状は仕様の発見・候補抽出・閲覧と PKCE サンプルまでを提供します。
+仕様本文の版別保存・節単位の差分、RFC の更新／廃止関係や正誤表の自動照合、確認結果からの自動学習、JWT/DPoP 等の追加サンプル、日次のサンプルコード生成は未実装です。現状は仕様の発見・候補抽出・閲覧と、デモ主体による認可コード + PKCE サンプルまでを提供します。
