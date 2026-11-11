@@ -17,7 +17,12 @@ def read(path, default):
 def save(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix('.tmp')
-    temporary.write_text(json.dumps(value, ensure_ascii=False, separators=(',', ':')) + '\n')
+    if path.name == 'semantic-index.json':
+        rows = ',\n'.join(json.dumps(name)+':'+json.dumps(row,separators=(',',':')) for name,row in sorted(value['entries'].items()))
+        encoded = '{\n"signature":'+json.dumps(value['signature'])+',\n"entries":{\n'+rows+'\n}\n}\n'
+    else:
+        encoded = json.dumps(value,ensure_ascii=False,separators=(',',':'))+'\n'
+    temporary.write_text(encoded)
     temporary.replace(path)
 
 def request(url):
@@ -67,14 +72,18 @@ def identity(config, fixtures):
 def evaluate(model, config, fixtures, scorer=scores):
     values = scorer(model, fixtures, config)
     calibration = [(c,v) for c,v in zip(fixtures,values) if c['split']=='calibration']
-    # Choose on calibration positives only; never tune on held-out labels.
+    # Midpoint of calibration class boundaries when separable; held-out labels are never used.
     positive = sorted(v for c,v in calibration if c['expected'])
     if not positive:
         raise ValueError('No positive calibration cases')
-    threshold = positive[0] - 0.01
+    negative = [v for c,v in calibration if not c['expected']]
+    if not negative:
+        raise ValueError('No negative calibration cases')
+    threshold = (positive[0]+max(negative))/2 if max(negative)<positive[0] else positive[0]-0.01
     heldout = [(c,v) for c,v in zip(fixtures,values) if c['split']=='test']
     measured = metrics([c for c,v in heldout],[v for c,v in heldout],threshold)
-    return {'signature':identity(config,fixtures),'model':config['model'],'threshold':threshold,'metrics':measured,
+    regression=[(c,v) for c,v in zip(fixtures,values) if c['split']=='regression']
+    return {'regressionMetrics':metrics([c for c,v in regression],[v for c,v in regression],threshold), 'signature':identity(config,fixtures),'model':config['model'],'threshold':threshold,'metrics':measured,
             'status':'passed' if measured['recall']>=0.90 and measured['precision']>=0.5 else 'failed',
             'scores':[{'name':c['name'],'split':c['split'],'expected':c['expected'],'score':round(v,6)} for c,v in zip(fixtures,values)]}
 

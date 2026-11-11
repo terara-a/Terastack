@@ -32,3 +32,13 @@ test('site build is repeatable and publishes only whitelisted static files',asyn
     const html=await readFile(`${root}/dist/index.html`,'utf8'); assert.ok(html.includes('href="./style.css"')); assert.ok(html.includes('src="./app.js"'));
   } finally { await rm(root,{recursive:true}); }
 });
+test('reviewed specifications override candidates and excluded or stale revisions are hidden',()=>{
+ const state={version:2,index:{rfc9635:['','',null],'draft-new':['02','today',null],rfc1:['','',null]}};
+ const reviewed={rfc9635:{status:'confirmed',title:'GNAP',rev:'',reason:'Reviewed'},rfc1:{status:'excluded'},'draft-new':{status:'confirmed',rev:'01',title:'Old review'}};
+ const candidates={rfc9635:{rev:'',title:'Machine'},rfc1:{rev:'',title:'Excluded'},'draft-new':{rev:'01',time:'yesterday',title:'Stale'}};
+ const result=publicData(state,{},[],null,reviewed,candidates,{screened:3});
+ assert.equal(result.documents.length,1); assert.equal(result.documents[0].status,'confirmed'); assert.equal(result.documents[0].title,'GNAP');
+ assert.equal(result.review.confirmed,1); assert.equal(result.review.unreviewed,2);
+ const candidate=publicData(state,{},[],null,{}, {'draft-new':{rev:'02',time:'today',title:'Current candidate',reason:'Similar'}});
+ assert.equal(candidate.documents[0].status,'candidate');
+});

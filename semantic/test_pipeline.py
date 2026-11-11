@@ -13,11 +13,11 @@ class PipelineTests(unittest.TestCase):
             list(documents('draft',lambda _: {'objects':[],'meta':{'next':'https://evil.example/api/'}}))
     def test_heldout_labels_do_not_tune_threshold(self):
         config={'model':'fake'}
-        cases=[{'name':'a','split':'calibration','expected':True},{'name':'b','split':'test','expected':True},{'name':'c','split':'test','expected':False}]
-        scorer=lambda *args:[0.4,0.5,0.1]
+        cases=[{'name':'a','split':'calibration','expected':True},{'name':'n','split':'calibration','expected':False},{'name':'b','split':'test','expected':True},{'name':'c','split':'test','expected':False}]
+        scorer=lambda *args:[0.4,-0.2,0.5,0.1]
         first=evaluate(None,config,cases,scorer)
         self.assertEqual(first['status'],'passed')
-        cases[1]['expected']=False
+        cases[2]['expected']=False
         second=evaluate(None,config,cases,scorer)
         self.assertEqual(first['threshold'],second['threshold'])
         self.assertNotEqual(first['signature'],second['signature'])
@@ -34,8 +34,8 @@ class PipelineTests(unittest.TestCase):
         self.assertNotEqual(first,progress[doc['name']][0])
     def test_fixture_has_fifty_cases_and_separate_splits(self):
         cases=json.loads((Path(__file__).parents[1]/'evaluation/semantic-cases.json').read_text())
-        self.assertEqual(len(cases),50)
-        self.assertEqual(len({c['name'] for c in cases}),50)
-        self.assertEqual({c['split'] for c in cases},{'calibration','test'})
-        self.assertEqual(sum(c['expected'] for c in cases),25)
+        self.assertEqual(len(cases),74)
+        self.assertEqual(len({c['name'] for c in cases}),74)
+        self.assertEqual({c['split'] for c in cases},{'calibration','regression','test'})
+        self.assertEqual(sum(c['expected'] for c in cases),37)
 if __name__=='__main__': unittest.main()

@@ -23,7 +23,7 @@ export function publicData(state: any, related: any, reports: any[], evaluation:
     merged.set(name, {name,type:name.startsWith('rfc')?'RFC':'Draft',rev:String(doc.rev ?? ''),title:String(doc.title ?? ''),reason:String(doc.reason ?? ''),url:`https://datatracker.ietf.org/doc/${name}/`,status:'confirmed'});
   }
   const documents = [...merged.values()].sort((a,b) => a.status.localeCompare(b.status)*-1 || a.name.localeCompare(b.name));
-  const review = {confirmed:documents.filter(d=>d.status==='confirmed').length,candidates:documents.filter(d=>d.status==='candidate').length,screened:semantic?.screened ?? 0};
+  const review = {confirmed:documents.filter(d=>d.status==='confirmed').length,candidates:documents.filter(d=>d.status==='candidate').length,screened:semantic?.screened ?? 0,unreviewed:counts.total-documents.filter(d=>d.status==='confirmed').length};
   const daily = reports.map(report => ({at: report.started, changed: report.changedCount ?? 0, relevant: report.relevant?.length ?? 0, pending: report.pendingCount ?? null}))
     .filter(report => typeof report.at === 'string' && Number.isFinite(Date.parse(report.at))).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 30);
   return {lastCollection: state.lastSuccess ?? null, counts, documents, daily, review, evaluationStatus: ['passed', 'failed', 'running'].includes(evaluation?.status) ? evaluation.status : 'not_run'};

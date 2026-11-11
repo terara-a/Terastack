@@ -74,3 +74,7 @@ python3 -m http.server 8000 --directory dist
 `site/` はHTML/CSS/JavaScript、`scripts/build-pages.ts` は公開データの生成処理です。公開物は `dist/` の静的ファイルだけです。全件索引・費用台帳・API応答・キーは配信せず、件数と関連文書の許可した項目だけを `data.json` に書き出します。パスは相対指定なので `/Terastack/` などのプロジェクトページでも動きます。外部のフォントやJavaScript CDNは使いません。
 
 静的サイトの公開はモデルAPIの課金・分類・Workersのサーバー実装とは独立しています。認可サーバーや状態を持つサンプルは引き続きWorkers等で実行します。
+
+## 無料モデルによる関連候補の抽出
+
+既定の日次処理はCPU埋め込みモデルを使用し、有料APIを必須にしません。Pagesには人が確認した仕様と、機械が見つけた未確認候補を区別して掲載します。最初は `evaluate`、次に `backfill` で分割処理してください。手順・評価の限界・レビュー方法は [ローカル候補抽出](docs/local-semantic.md) を参照してください。従来のAPI分類設定は明示的に `CLASSIFICATION_ENGINE=api` にした場合だけ使います。

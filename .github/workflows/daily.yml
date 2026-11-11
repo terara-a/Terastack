@@ -37,7 +37,7 @@ jobs:
       CLASSIFIER_MODEL_PROFILES: ${{ vars.CLASSIFIER_MODEL_PROFILES }}
       CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
       CLASSIFIER_MODEL: ${{ vars.CLASSIFIER_MODEL }}
-      CLASSIFIER_API_KEY: ${{ secrets.CLASSIFIER_API_KEY }}
+      CLASSIFIER_API_KEY: ${{ (inputs.mode == 'models' || vars.CLASSIFICATION_ENGINE == 'api') && secrets.CLASSIFIER_API_KEY || '' }}
       CLASSIFIER_INPUT_USD_PER_MILLION: ${{ vars.CLASSIFIER_INPUT_USD_PER_MILLION }}
       CLASSIFIER_OUTPUT_USD_PER_MILLION: ${{ vars.CLASSIFIER_OUTPUT_USD_PER_MILLION }}
       CLASSIFIER_MAX_USD: ${{ inputs.max_usd || vars.CLASSIFIER_MAX_USD || '0.10' }}
@@ -46,7 +46,7 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
-      # Run current main code, carrying only unmerged catalog data forward.
+      # Respect the selected manual ref; scheduled runs use main. Carry only pending data forward.
       - name: Restore pending catalog changes
         if: env.CLASSIFY_MODE != 'models'
         shell: bash

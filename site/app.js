@@ -30,7 +30,7 @@ $('pkce').addEventListener('submit', async event => {
   } catch { $('challenge').textContent = 'このブラウザでは計算できません。HTTPS で開いてください。'; }
 });
 fetch('./data.json').then(response => { if (!response.ok) throw new Error('Fetch failed'); return response.json(); }).then(data => {
-  snapshot = data; $('total').textContent = number(data.counts.total); $('relevant').textContent = data.review ? `${number(data.review.confirmed)} / ${number(data.review.candidates)}` : number(data.counts.relevant); $('pending').textContent = number(data.counts.pending);
+  snapshot = data; $('total').textContent = number(data.counts.total); $('relevant').textContent = data.review ? `${number(data.review.confirmed)} / ${number(data.review.candidates)}` : number(data.counts.relevant); $('pending').textContent = number(data.review?.unreviewed ?? data.counts.pending);
   $('breakdown').textContent = `RFC ${number(data.counts.rfc)} / Draft ${number(data.counts.draft)}`;
   $('freshness').textContent = `最終収集：${date(data.lastCollection)}（日本時間）`;
   $('classification').textContent = data.review ? `候補抽出済み ${number(data.review.screened)} 件。低スコアも未確認として保持` : '未判定・判断困難な文書';
