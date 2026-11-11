@@ -1,11 +1,11 @@
 {
-  "at": "2026-11-10T04:11:45.457Z",
+  "at": "2026-11-11T02:00:05.877Z",
   "status": "failed",
   "model": "gpt-4o-mini",
   "url": "https://api.openai.com/v1/chat/completions",
   "promptVersion": "semantic-v2",
   "fixtureVersion": "authz-eval-v1",
-  "durationMs": 1316,
+  "durationMs": 1109,
   "completedCount": 0,
   "error": {
     "kind": "provider_error",
@@ -14,8 +14,8 @@
     "type": "insufficient_quota"
   },
   "ledger": {
-    "reservedUSD": 0.016466249999999998,
-    "calls": 10,
+    "reservedUSD": 0.018295799999999997,
+    "calls": 11,
     "inputTokens": 0,
     "outputTokens": 0
   }
