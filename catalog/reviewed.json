@@ -46,5 +46,25 @@
     "reason": "§5.2〜§5.4で認可・OpenID Connect使用時の認証・セッション完全性の安全性目標を、§6〜§8で攻撃者の能力と前提条件・適用限界を定義していることを原文で確認。FAPI 2.0の認証・認可に関する攻撃者モデルとして直接関連する仕様。",
     "reviewedAt": "2026-11-12T07:55:05Z",
     "reviewedBy": "OpenAI Codex（AI）"
+  },
+  "openid:openid-financial-api-part-1-1_0": {
+    "status": "confirmed",
+    "url": "https://openid.net/specs/openid-financial-api-part-1-1_0.html",
+    "rev": "1_0",
+    "sha256": "2c5da4e50fae5157c397f4e2a522dc4007a71207d1715064ca305bd5985b1a32",
+    "title": "Financial-grade API Security Profile 1.0 - Part 1: Baseline",
+    "reason": "§1・§5.2.2〜§5.2.4・§6.2.1で、OAuth 2.0のトークン取得、PKCE S256、redirect_uriの厳密な照合、利用者認証・認可、クライアント要件、保護リソースでのscope・期限・失効検証を定義していることを原文で確認。認証・認可に直接関連するFAPI 1.0のBaseline仕様。",
+    "reviewedAt": "2026-11-12T08:08:04Z",
+    "reviewedBy": "OpenAI Codex（AI）"
+  },
+  "openid:openid-financial-api-part-2-1_0": {
+    "status": "confirmed",
+    "url": "https://openid.net/specs/openid-financial-api-part-2-1_0.html",
+    "rev": "1_0",
+    "sha256": "72e559bee9e8841f3819df26400b72164a38577ed75badbde605b1592ce90fe7",
+    "title": "Financial-grade API Security Profile 1.0 - Part 2: Advanced",
+    "reason": "§1・§5.1.1〜§5.1.2・§5.2.2〜§5.2.3・§6.2.1で、署名付きJWTリクエスト、ID Tokenの分離署名またはJARMによる認可応答の保護、MTLSによる送信者制約付きトークン等を定義していることを原文で確認。認証・認可に直接関連するFAPI 1.0のAdvanced仕様。",
+    "reviewedAt": "2026-11-12T08:08:04Z",
+    "reviewedBy": "OpenAI Codex（AI）"
   }
 }
