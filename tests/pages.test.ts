@@ -61,14 +61,14 @@ test('OpenID appears by source and publication stage without becoming human-conf
 
 const openidName='openid-connect-core-1_0';
 const openidDoc={title:'Collected title',url:`https://openid.net/specs/${openidName}.html`,revision:'1_0',stage:'Final',listed:true,sha256:'a'.repeat(64),checkedAt:'2026-11-12T00:00:00Z'};
-const openidDecision={status:'confirmed',url:openidDoc.url,rev:'1_0',sha256:openidDoc.sha256,title:'Reviewed title',reason:'原文を確認し、認証結果を伝える仕様であることを確認した。',reviewedAt:'2026-11-12T09:00:00+09:00'};
+const openidDecision={status:'confirmed',url:openidDoc.url,rev:'1_0',sha256:openidDoc.sha256,title:'Reviewed title',reason:'原文を確認し、認証結果を伝える仕様であることを確認した。',reviewedAt:'2026-11-12T09:00:00+09:00',reviewedBy:'OpenAI Codex（AI）'};
 const openidReviews=(patch={})=>({[`openid:${openidName}`]:{...openidDecision,...patch}});
 const withReview=(reviews:any,patch={},documents:any=null)=>publicData({version:2,index:{}},[],reviews,{},null,{documents:documents ?? {[openidName]:{...openidDoc,...patch}}});
 
 test('OpenID confirmation requires exact URL, revision and body hash; timestamps do not invalidate it',()=>{
  const data=withReview(openidReviews(),{checkedAt:'2026-11-13T00:00:00Z',etag:'new HTTP validator',title:'Changed listing title'});
  assert.equal(data.documents[0].status,'confirmed');assert.equal(data.documents[0].reason,openidDecision.reason);assert.equal(data.documents[0].title,'Reviewed title');
- assert.equal(data.documents[0].reviewedAt,openidDecision.reviewedAt);
+ assert.equal(data.documents[0].reviewedAt,openidDecision.reviewedAt);assert.equal(data.documents[0].reviewedBy,'OpenAI Codex（AI）');
  assert.equal(data.review.confirmed,1);assert.equal(data.review.listed,0);assert.equal(data.review.unreviewed,0);assert.equal(data.counts.pending,0);
  assert.ok(!JSON.stringify(data).includes(openidDoc.sha256));
 });
@@ -95,6 +95,11 @@ test('a new OpenID URL never inherits another edition review and removed entries
  assert.equal(withReview({[openidName]:openidDecision}).documents[0].status,'listed');
 });
 test('invalid OpenID review records fail the build instead of confirming or hiding documents',()=>{
- for(const patch of [{status:'listed'},{url:'https://evil.example/spec'},{rev:undefined},{sha256:undefined},{sha256:'bad'},{reason:' '},{title:''},{reviewedAt:'today'},{reviewedAt:'2026-11-12T00:00:00'}]) assert.throws(()=>withReview(openidReviews(patch)),/Invalid OpenID review/);
+ for(const patch of [{status:'listed'},{reviewedBy:42},{reviewedBy:' '},{url:'https://evil.example/spec'},{rev:undefined},{sha256:undefined},{sha256:'bad'},{reason:' '},{title:''},{reviewedAt:'today'},{reviewedAt:'2026-11-12T00:00:00'}]) assert.throws(()=>withReview(openidReviews(patch)),/Invalid OpenID review/);
  assert.throws(()=>withReview({'openid:../bad':openidDecision}),/Invalid OpenID review/);
+});
+
+test('legacy OpenID review without attribution remains supported without inventing a reviewer',()=>{
+ const reviews=openidReviews();delete reviews[`openid:${openidName}`].reviewedBy;
+ const data=withReview(reviews);assert.equal(data.documents[0].status,'confirmed');assert.ok(!('reviewedBy' in data.documents[0]));
 });

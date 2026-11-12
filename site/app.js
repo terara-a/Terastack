@@ -14,7 +14,7 @@ function render() {
   for (const doc of filtered.slice(page * size, (page + 1) * size)) {
     const article = element('article', '', 'document');
     article.append(element('span', doc.status === 'confirmed' ? '確認済み' : doc.status === 'needs_review' ? '再確認待ち' : doc.status === 'listed' ? '公式一覧掲載・未確認' : '関連候補・未確認', 'badge'), element('span', doc.source || 'IETF', 'badge'), element('span', doc.stage || doc.type, 'badge'), element('span', `${doc.name}${doc.rev ? ` / rev ${doc.rev}` : ''}`, 'document-name'));
-    const heading = element('h3', ''); const link = element('a', doc.title || doc.name); link.href = doc.url; heading.append(link); article.append(heading, element('p', doc.reason)); if (doc.source === 'OpenID Foundation') article.append(element('p', `本文の最終確認（自動）：${date(doc.checkedAt)}（日本時間）`, 'muted')); if (doc.reviewedAt) article.append(element('p', `人が確認した日時：${date(doc.reviewedAt)}（日本時間）`, 'muted')); if (doc.reviewNotice) article.append(element('p', doc.reviewNotice)); $('documents').append(article);
+    const heading = element('h3', ''); const link = element('a', doc.title || doc.name); link.href = doc.url; heading.append(link); article.append(heading, element('p', doc.reason)); if (doc.source === 'OpenID Foundation') article.append(element('p', `本文の最終確認（自動）：${date(doc.checkedAt)}（日本時間）`, 'muted')); if (doc.reviewedAt) article.append(element('p', `確認日時：${date(doc.reviewedAt)}（日本時間）`, 'muted')); if (doc.reviewedBy) article.append(element('p', `原文の確認主体：${doc.reviewedBy}`, 'muted')); if (doc.reviewNotice) article.append(element('p', doc.reviewNotice)); $('documents').append(article);
   }
   $('page').textContent = `${page + 1} / ${pages}`; $('previous').disabled = page === 0; $('next').disabled = page >= pages - 1;
 }

@@ -7,6 +7,7 @@ export function validateOpenIDReviews(reviewed: any): void {
     if (!/^[A-Za-z0-9_.-]+$/.test(name) || !value || !['confirmed','excluded'].includes(value.status) ||
         value.url !== `https://openid.net/specs/${name}.html` || typeof value.rev !== 'string' ||
         !/^[a-f0-9]{64}$/.test(value.sha256 ?? '') ||
+        (value.reviewedBy !== undefined && (typeof value.reviewedBy !== 'string' || !value.reviewedBy.trim())) ||
         typeof value.title !== 'string' || !value.title.trim() || typeof value.reason !== 'string' || !value.reason.trim() ||
         typeof value.reviewedAt !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value.reviewedAt) || !Number.isFinite(Date.parse(value.reviewedAt))) {
       throw new Error(`Invalid OpenID review: ${key}; set status, official URL, rev, SHA-256, title, reason and reviewedAt`);

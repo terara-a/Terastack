@@ -361,17 +361,25 @@
       "url": "https://openid.net/specs/openid-connect-backchannel-1_0.html"
     },
     "openid-connect-core-1_0": {
-      "changedAt": "2026-11-12T03:11:02Z",
+      "changedAt": "2026-11-12T06:59:14Z",
+      "checkedAt": "2026-11-12T06:59:14Z",
+      "etag": "\"6ad04-60c9a2f5720c0\"",
+      "lastModified": "Sat, 16 Dec 2023 05:56:59 GMT",
       "listed": true,
       "revision": "1_0",
+      "sha256": "4d016752a645e8a3c259baa4173b5a90cb6c82898ce868fc8444adde262a5aed",
       "stage": "Final",
       "title": "OpenID Connect Core",
       "url": "https://openid.net/specs/openid-connect-core-1_0.html"
     },
     "openid-connect-discovery-1_0": {
-      "changedAt": "2026-11-12T03:11:02Z",
+      "changedAt": "2026-11-12T06:59:23Z",
+      "checkedAt": "2026-11-12T06:59:23Z",
+      "etag": "\"1aa38-60c9a2fa36c00\"",
+      "lastModified": "Sat, 16 Dec 2023 05:57:04 GMT",
       "listed": true,
       "revision": "1_0",
+      "sha256": "0401a07b35de50e914e195aa2c3c64cc4f6542464381c885d24a2623fbf75ec2",
       "stage": "Final",
       "title": "OpenID Connect Discovery",
       "url": "https://openid.net/specs/openid-connect-discovery-1_0.html"
