@@ -63,3 +63,5 @@ npm run build:pages
 ## 個別の確認メモ
 
 - [OpenID Connect Core / Discovery（2026-11-12、OpenAI Codexによる原文確認）](review-notes/openid-core-discovery-2026-11-12.md)
+- [FAPI 2.0 Security Profile / Attacker Model（2026-11-12、OpenAI Codexによる原文確認）](review-notes/fapi2-security-profile-attacker-model-2026-11-12.md)
+- [FAPI 1.0 Baseline / Advanced（2026-11-12、OpenAI Codexによる原文確認）](review-notes/fapi1-baseline-advanced-2026-11-12.md)
