@@ -32,7 +32,7 @@ test('site build is repeatable and publishes only whitelisted static files',asyn
     await writeFile(`${root}/dist/samples/pkce/obsolete-source.txt`,'removed source');
     await buildPages(root);
     assert.equal(await readFile(`${root}/dist/data.json`,'utf8'),first);
-    assert.deepEqual((await readdir(`${root}/dist`)).sort(),['.nojekyll','app.js','data.json','index.html','samples','style.css']);
+    assert.deepEqual((await readdir(`${root}/dist`)).sort(),['.nojekyll','app.js','data.json','favicon.png','favicon.svg','index.html','samples','style.css']);
     assert.ok(!first.includes('NEVER-PUBLISH'));
     assert.ok((await readFile(`${root}/dist/samples/pkce/index.html`,'utf8')).includes('認可コード'));
     assert.deepEqual((await readdir(`${root}/dist/samples/pkce`)).sort(),['client.js','code.html','code.js','index.html','protocol.js','sample.css']);

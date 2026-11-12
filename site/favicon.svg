@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Terastack">
+  <rect width="64" height="64" rx="14" fill="#166c55"/>
+  <path d="M16 28h32v8H16zm4 12h24v8H20z" fill="#8dc7ae"/>
+  <path d="M12 12h40v12H36v28h-8V24H12z" fill="#f5f7f2"/>
+</svg>
