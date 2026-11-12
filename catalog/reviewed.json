@@ -26,5 +26,25 @@
     "reason": "§3・§4.1・§4.3・§7.2で、issuer・認可／トークンエンドポイント・jwks_uri等のProviderメタデータ、設定取得、issuerの厳密な一致検証を定義していることを原文で確認。認証構成の発見と信頼する発行者の検証に直接関連する仕様。",
     "reviewedAt": "2026-11-12T07:03:01Z",
     "reviewedBy": "OpenAI Codex（AI）"
+  },
+  "openid:fapi-security-profile-2_0-final": {
+    "status": "confirmed",
+    "url": "https://openid.net/specs/fapi-security-profile-2_0-final.html",
+    "rev": "2_0",
+    "sha256": "26a49ad19b1f2b19ecc1cd9b825b4d5012f5e03a5dc8cb0dbd26462d39da465c",
+    "title": "FAPI 2.0 Security Profile",
+    "reason": "§1・§5.3.2・§5.3.3・§5.3.4で、OAuth 2.0のクライアント認証、PARとPKCE S256を使う認可コードフロー、MTLS/DPoPによるアクセストークンの送信者制約、保護リソースでのトークン検証を規定していることを原文で確認。高セキュリティAPIの認可に直接関連する仕様。",
+    "reviewedAt": "2026-11-12T07:55:05Z",
+    "reviewedBy": "OpenAI Codex（AI）"
+  },
+  "openid:fapi-attacker-model-2_0-final": {
+    "status": "confirmed",
+    "url": "https://openid.net/specs/fapi-attacker-model-2_0-final.html",
+    "rev": "2_0",
+    "sha256": "0de77b6f449ec5f80cab8d51d24f46cfeb02159dd08288fded6aee0588b2ff18",
+    "title": "FAPI 2.0 Attacker Model",
+    "reason": "§5.2〜§5.4で認可・OpenID Connect使用時の認証・セッション完全性の安全性目標を、§6〜§8で攻撃者の能力と前提条件・適用限界を定義していることを原文で確認。FAPI 2.0の認証・認可に関する攻撃者モデルとして直接関連する仕様。",
+    "reviewedAt": "2026-11-12T07:55:05Z",
+    "reviewedBy": "OpenAI Codex（AI）"
   }
 }
