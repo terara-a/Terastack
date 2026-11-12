@@ -56,7 +56,7 @@ export async function buildPages(root = '.', output = 'dist') {
   const reports = await Promise.all(names.filter(name => name.endsWith('.json')).map(name => read(`reports/daily/${name}`, null)));
   const data = publicData(state, reports, await read('catalog/reviewed.json', {}), await read('catalog/candidates.json', {}), await read('reports/semantic/progress.json', null), await read('catalog/openid.json', null));
   const target = join(root, output); await mkdir(target, {recursive: true});
-  for (const file of ['index.html', 'style.css', 'app.js']) await copyFile(join(root, 'site', file), join(target, file));
+  for (const file of ['index.html', 'style.css', 'app.js', 'favicon.svg', 'favicon.png']) await copyFile(join(root, 'site', file), join(target, file));
   await rm(join(target,'samples'),{recursive:true,force:true});
   await cp(join(root,'site/samples'),join(target,'samples'),{recursive:true});
   await writeFile(join(target, 'data.json'), JSON.stringify(data) + '\n');
