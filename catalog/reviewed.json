@@ -6,5 +6,25 @@
   "rfc8725": {"status":"confirmed","rev":"","title":"JSON Web Token Best Current Practices","reason":"JWT を安全に利用・検証するための指針。"},
   "rfc9449": {"status":"confirmed","rev":"","title":"OAuth 2.0 Demonstrating Proof of Possession (DPoP)","reason":"アクセストークンを送信者の鍵へ束縛する仕組み。"},
   "rfc9700": {"status":"confirmed","rev":"","title":"Best Current Practice for OAuth 2.0 Security","reason":"OAuth 2.0 のセキュリティ指針。"},
-  "rfc9421": {"status":"confirmed","rev":"","title":"HTTP Message Signatures","reason":"HTTP メッセージの署名と検証を定義。"}
+  "rfc9421": {"status":"confirmed","rev":"","title":"HTTP Message Signatures","reason":"HTTP メッセージの署名と検証を定義。"},
+  "openid:openid-connect-core-1_0": {
+    "status": "confirmed",
+    "url": "https://openid.net/specs/openid-connect-core-1_0.html",
+    "rev": "1_0",
+    "sha256": "4d016752a645e8a3c259baa4173b5a90cb6c82898ce868fc8444adde262a5aed",
+    "title": "OpenID Connect Core 1.0 incorporating errata set 2",
+    "reason": "§1・§2・§3.1・§3.1.3.7・§5.3で、OAuth 2.0上の利用者認証、ID Tokenとその検証、認可コードフロー、Access TokenによるUserInfo取得を定義していることを原文で確認。認証・認可に直接関連するコア仕様。",
+    "reviewedAt": "2026-11-12T07:03:01Z",
+    "reviewedBy": "OpenAI Codex（AI）"
+  },
+  "openid:openid-connect-discovery-1_0": {
+    "status": "confirmed",
+    "url": "https://openid.net/specs/openid-connect-discovery-1_0.html",
+    "rev": "1_0",
+    "sha256": "0401a07b35de50e914e195aa2c3c64cc4f6542464381c885d24a2623fbf75ec2",
+    "title": "OpenID Connect Discovery 1.0 incorporating errata set 2",
+    "reason": "§3・§4.1・§4.3・§7.2で、issuer・認可／トークンエンドポイント・jwks_uri等のProviderメタデータ、設定取得、issuerの厳密な一致検証を定義していることを原文で確認。認証構成の発見と信頼する発行者の検証に直接関連する仕様。",
+    "reviewedAt": "2026-11-12T07:03:01Z",
+    "reviewedBy": "OpenAI Codex（AI）"
+  }
 }

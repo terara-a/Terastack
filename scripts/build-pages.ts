@@ -33,7 +33,7 @@ export function publicData(state: any, reports: any[], reviewed: any = {}, candi
     const reason = status === 'confirmed' ? decision.reason : status === 'needs_review'
       ? `以前の確認理由：${decision.reason}` : '公式仕様一覧への掲載。関連性・内容は未確認です。';
     return [{name,type:'OpenID',source:'OpenID Foundation',rev:String(doc.revision ?? ''),title:status === 'confirmed' ? decision.title : doc.title,reason,url:doc.url,status,stage:String(doc.stage ?? 'Other'),checkedAt:doc.checkedAt ?? null,
-      ...(decision ? {reviewedAt:decision.reviewedAt} : {}),
+      ...(decision ? {reviewedAt:decision.reviewedAt,...(decision.reviewedBy ? {reviewedBy:decision.reviewedBy} : {})} : {}),
       ...(status === 'needs_review' ? {reviewNotice:'対象版または本文が確認時と一致しません。原文を再確認してください。'} : {})}];
   });
   const documents = [...merged.values()].map(doc=>({...doc,source:'IETF',stage:''})).concat(openidDocuments).sort((a,b) => ({confirmed:0,needs_review:1,listed:2,candidate:3}[a.status] - {confirmed:0,needs_review:1,listed:2,candidate:3}[b.status]) || a.name.localeCompare(b.name));
