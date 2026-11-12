@@ -1,0 +1,784 @@
+{
+  "documents": {
+    "authorization-api-1_0": {
+      "changedAt": "2026-11-12T03:11:09Z",
+      "checkedAt": "2026-11-12T03:11:09Z",
+      "etag": "\"3bb64-6482a0d307ee2\"",
+      "lastModified": "Mon, 12 Jan 2026 05:21:47 GMT",
+      "listed": true,
+      "revision": "1_0",
+      "sha256": "f0ee89cc4a688f9f409dc323c8342579d74c45dc776a6b04a622ba9738de82bc",
+      "stage": "Final",
+      "title": "Authorization API 1.0 Final Specification",
+      "url": "https://openid.net/specs/authorization-api-1_0.html"
+    },
+    "authorization-api-1_0-01": {
+      "changedAt": "2026-11-12T03:11:17Z",
+      "checkedAt": "2026-11-12T03:11:17Z",
+      "etag": "\"19b5b-6224feb2c2799\"",
+      "lastModified": "Tue, 17 Sep 2024 12:35:03 GMT",
+      "listed": true,
+      "revision": "1_0-01",
+      "sha256": "8b09d679fd0f20ab0c73a127183b17f9f1aa29e47775fb72966b0d9da43cb710",
+      "stage": "Implementer's Draft",
+      "title": "AuthZEN 1.0",
+      "url": "https://openid.net/specs/authorization-api-1_0-01.html"
+    },
+    "fapi-attacker-model-2_0-final": {
+      "changedAt": "2026-11-12T03:11:23Z",
+      "checkedAt": "2026-11-12T03:11:23Z",
+      "etag": "\"126dc-62ec1cdb4adc0\"",
+      "lastModified": "Sat, 22 Feb 2025 21:29:35 GMT",
+      "listed": true,
+      "revision": "2_0",
+      "sha256": "0de77b6f449ec5f80cab8d51d24f46cfeb02159dd08288fded6aee0588b2ff18",
+      "stage": "Final",
+      "title": "FAPI 2.0 Attacker Model",
+      "url": "https://openid.net/specs/fapi-attacker-model-2_0-final.html"
+    },
+    "fapi-grant-management": {
+      "changedAt": "2026-11-12T03:11:28Z",
+      "checkedAt": "2026-11-12T03:11:28Z",
+      "etag": "\"24f-65140e2e3d1a2\"",
+      "lastModified": "Thu, 07 May 2026 21:23:06 GMT",
+      "listed": true,
+      "revision": "",
+      "sha256": "9cc6772cc083e9b71360d3fee8aad9b98b2d99a6ea775388c75fa7067016df78",
+      "stage": "Implementer's Draft",
+      "title": "Grant Management for OAuth 2.0",
+      "url": "https://openid.net/specs/fapi-grant-management.html"
+    },
+    "fapi-message-signing-2_0-final": {
+      "changedAt": "2026-11-12T03:11:35Z",
+      "checkedAt": "2026-11-12T03:11:35Z",
+      "etag": "\"14d59-63fb3363314a7\"",
+      "lastModified": "Fri, 26 Sep 2025 12:13:21 GMT",
+      "listed": true,
+      "revision": "2_0",
+      "sha256": "dc59c7d55017078967d4f230b2a1858686325c8cc5339bf5a6e79b806bee59b3",
+      "stage": "Final",
+      "title": "FAPI 2.0 Message Signing",
+      "url": "https://openid.net/specs/fapi-message-signing-2_0-final.html"
+    },
+    "fapi-security-profile-2_0-final": {
+      "changedAt": "2026-11-12T03:11:41Z",
+      "checkedAt": "2026-11-12T03:11:41Z",
+      "etag": "\"24c46-62ec1cdb4adc0\"",
+      "lastModified": "Sat, 22 Feb 2025 21:29:35 GMT",
+      "listed": true,
+      "revision": "2_0",
+      "sha256": "26a49ad19b1f2b19ecc1cd9b825b4d5012f5e03a5dc8cb0dbd26462d39da465c",
+      "stage": "Final",
+      "title": "FAPI 2.0 Security Profile",
+      "url": "https://openid.net/specs/fapi-security-profile-2_0-final.html"
+    },
+    "fastfed-core-1_0-03": {
+      "changedAt": "2026-11-12T03:11:48Z",
+      "checkedAt": "2026-11-12T03:11:48Z",
+      "etag": "\"29d2e-5b2bf1ae0efc0\"",
+      "lastModified": "Wed, 28 Oct 2020 18:12:23 GMT",
+      "listed": true,
+      "revision": "1_0-03",
+      "sha256": "4a6ddf455361f35555fe0e8d51e74bc214585ba38591e6afdf9aaceec8fde3af",
+      "stage": "Implementer's Draft",
+      "title": "FastFed Core 1.0",
+      "url": "https://openid.net/specs/fastfed-core-1_0-03.html"
+    },
+    "fastfed-core-1_0-ID1": {
+      "changedAt": "2026-11-12T03:11:56Z",
+      "checkedAt": "2026-11-12T03:11:56Z",
+      "etag": "\"29d2e-5b2bf1ae0efc0\"",
+      "lastModified": "Wed, 28 Oct 2020 18:12:23 GMT",
+      "listed": true,
+      "revision": "1_0",
+      "sha256": "4a6ddf455361f35555fe0e8d51e74bc214585ba38591e6afdf9aaceec8fde3af",
+      "stage": "Implementer's Draft",
+      "title": "FastFed Core 1.0",
+      "url": "https://openid.net/specs/fastfed-core-1_0-ID1.html"
+    },
+    "fastfed-saml-1_0-03": {
+      "changedAt": "2026-11-12T03:12:06Z",
+      "checkedAt": "2026-11-12T03:12:06Z",
+      "etag": "\"e167-5b2bf1ae0efc0\"",
+      "lastModified": "Wed, 28 Oct 2020 18:12:23 GMT",
+      "listed": true,
+      "revision": "1_0-03",
+      "sha256": "d1fcbe90165988dd76e5bad006052a84f97ba19958d5dc55ea2228bc2a3e7acc",
+      "stage": "Implementer's Draft",
+      "title": "FastFed 1.0 SAML Profile",
+      "url": "https://openid.net/specs/fastfed-saml-1_0-03.html"
+    },
+    "fastfed-saml-1_0-ID1": {
+      "changedAt": "2026-11-12T03:12:14Z",
+      "checkedAt": "2026-11-12T03:12:14Z",
+      "etag": "\"e167-5b2bf1ae0efc0\"",
+      "lastModified": "Wed, 28 Oct 2020 18:12:23 GMT",
+      "listed": true,
+      "revision": "1_0",
+      "sha256": "d1fcbe90165988dd76e5bad006052a84f97ba19958d5dc55ea2228bc2a3e7acc",
+      "stage": "Implementer's Draft",
+      "title": "FastFed 1.0 SAML Profile",
+      "url": "https://openid.net/specs/fastfed-saml-1_0-ID1.html"
+    },
+    "fastfed-scim-1_0-03": {
+      "changedAt": "2026-11-12T03:12:23Z",
+      "checkedAt": "2026-11-12T03:12:23Z",
+      "etag": "\"12c7c-5b2bf1ae0efc0\"",
+      "lastModified": "Wed, 28 Oct 2020 18:12:23 GMT",
+      "listed": true,
+      "revision": "1_0-03",
+      "sha256": "08beed08c6bad1327f0b493531614e907496bc1c4f6e0632682995fb98adb437",
+      "stage": "Implementer's Draft",
+      "title": "FastFed 1.0 SCIM Profile",
+      "url": "https://openid.net/specs/fastfed-scim-1_0-03.html"
+    },
+    "fastfed-scim-1_0-ID1": {
+      "changedAt": "2026-11-12T03:12:33Z",
+      "checkedAt": "2026-11-12T03:12:33Z",
+      "etag": "\"12c7c-5b2bf1ae0efc0\"",
+      "lastModified": "Wed, 28 Oct 2020 18:12:23 GMT",
+      "listed": true,
+      "revision": "1_0",
+      "sha256": "08beed08c6bad1327f0b493531614e907496bc1c4f6e0632682995fb98adb437",
+      "stage": "Implementer's Draft",
+      "title": "FastFed 1.0 SCIM Profile",
+      "url": "https://openid.net/specs/fastfed-scim-1_0-ID1.html"
+    },
+    "oauth-v2-form-post-response-mode-1_0": {
+      "changedAt": "2026-11-12T03:12:42Z",
+      "checkedAt": "2026-11-12T03:12:42Z",
+      "etag": "\"5d3a-514ba186fb580\"",
+      "lastModified": "Mon, 27 Apr 2015 19:53:10 GMT",
+      "listed": true,
+      "revision": "1_0",
+      "sha256": "5c776e43611a8fb03f673b121ebadab504f5372cb3c15dc020a9bd867a3a02dc",
+      "stage": "Final",
+      "title": "OAuth 2.0 Form Post Response Mode",
+      "url": "https://openid.net/specs/oauth-v2-form-post-response-mode-1_0.html"
+    },
+    "oauth-v2-grant-management-ID1": {
+      "changedAt": "2026-11-12T03:12:52Z",
+      "checkedAt": "2026-11-12T03:12:52Z",
+      "etag": "\"1ab56-5fbec78f92200\"",
+      "lastModified": "Wed, 17 May 2023 23:59:04 GMT",
+      "listed": true,
+      "revision": "",
+      "sha256": "13c3b8d3b2f16ad7cd529984e1fa0c228aca62de8eb9d7c155083d40d08798ab",
+      "stage": "Implementer's Draft",
+      "title": "Grant Management for OAuth 2.0",
+      "url": "https://openid.net/specs/oauth-v2-grant-management-ID1.html"
+    },
+    "oauth-v2-jarm": {
+      "changedAt": "2026-11-12T03:13:02Z",
+      "checkedAt": "2026-11-12T03:13:02Z",
+      "etag": "\"1621b-63cbc4fb1e586\"",
+      "lastModified": "Tue, 19 Aug 2025 18:49:08 GMT",
+      "listed": true,
+      "revision": "",
+      "sha256": "3a829c72cba3233d72a51ab5fdc6c832829014bae377c4e6363aee5941aec92d",
+      "stage": "Final",
+      "title": "JWT Secured Authorization Response Mode for OAuth 2.0 (JARM)",
+      "url": "https://openid.net/specs/oauth-v2-jarm.html"
+    },
+    "oauth-v2-multiple-response-types-1_0": {
+      "changedAt": "2026-11-12T03:13:07Z",
+      "checkedAt": "2026-11-12T03:13:07Z",
+      "etag": "\"a226-4f340ee298e80\"",
+      "lastModified": "Tue, 25 Feb 2014 20:28:26 GMT",
+      "listed": true,
+      "revision": "1_0",
+      "sha256": "6b0c1ee34cd13c91ff0dc0531e52a761947b2241f121cc6e1dae48a1c845196f",
+      "stage": "Final",
+      "title": "OAuth 2.0 Multiple Response Types",
+      "url": "https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html"
+    },
+    "openid-4-verifiable-credential-issuance-1_0": {
+      "changedAt": "2026-11-12T03:13:15Z",
+      "checkedAt": "2026-11-12T03:13:15Z",
+      "etag": "\"7b27d-63ef05fa65044\"",
+      "lastModified": "Tue, 16 Sep 2025 19:46:18 GMT",
+      "listed": true,
+      "revision": "1_0",
+      "sha256": "f123c3178cacd27688b15b762098a045e9eb35eccfe2f5f18a357c3815e06ba7",
+      "stage": "Final",
+      "title": "OpenID for Verifiable Credential Issuance",
+      "url": "https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html"
+    },
+    "openid-4-verifiable-credential-issuance-1_0-ID1": {
+      "changedAt": "2026-11-12T03:13:24Z",
+      "checkedAt": "2026-11-12T03:13:24Z",
+      "etag": "\"6ba6a-610e6cbeb9380\"",
+      "lastModified": "Thu, 08 Feb 2024 23:01:50 GMT",
+      "listed": true,
+      "revision": "1_0",
+      "sha256": "6045362027d70624d320c0211aab8163df350751663c274f2792a1c75eb3141e",
+      "stage": "Implementer's Draft",
+      "title": "OpenID for Verifiable Credential Issuance (OpenID4VCI)",
+      "url": "https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0-ID1.html"
+    },
+    "openid-4-verifiable-presentations-1_0": {
+      "changedAt": "2026-11-12T03:13:32Z",
+      "checkedAt": "2026-11-12T03:13:32Z",
+      "etag": "\"7dd49-63994268300de\"",
+      "lastModified": "Thu, 10 Jul 2025 14:38:44 GMT",
+      "listed": true,
+      "revision": "1_0",
+      "sha256": "e4f0abc689afd0a4f6c41b83954d7f970c5263a26143ad861216aea9918993bb",
+      "stage": "Final",
+      "title": "OpenID for Verifiable Presentations 1.0",
+      "url": "https://openid.net/specs/openid-4-verifiable-presentations-1_0.html"
+    },
+    "openid-attribute-exchange-1_0": {
+      "changedAt": "2026-11-12T03:13:37Z",
+      "checkedAt": "2026-11-12T03:13:37Z",
+      "etag": "\"bc4d-4408da0f7bf80\"",
+      "lastModified": "Wed, 05 Dec 2007 17:49:02 GMT",
+      "listed": true,
+      "revision": "1_0",
+      "sha256": "1dcad2eaccd6468279518628d8f859fd70f0012acacad58298d5f4f0bae64993",
+      "stage": "Final",
+      "title": "OpenID Attribute Exchange 1.0",
+      "url": "https://openid.net/specs/openid-attribute-exchange-1_0.html"
+    },
+    "openid-authentication-1_1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_1",
+      "stage": "Draft",
+      "title": "OpenID Authentication 1.1",
+      "url": "https://openid.net/specs/openid-authentication-1_1.html"
+    },
+    "openid-authentication-2_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "2_0",
+      "stage": "Final",
+      "title": "OpenID Authentication 2.0",
+      "url": "https://openid.net/specs/openid-authentication-2_0.html"
+    },
+    "openid-caep-1_0-final": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Continuous Access Evaluation Profile 1.0",
+      "url": "https://openid.net/specs/openid-caep-1_0-final.html"
+    },
+    "openid-caep-interoperability-profile-1_0-ID1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "CAEP Interoperability Profile",
+      "url": "https://openid.net/specs/openid-caep-interoperability-profile-1_0-ID1.html"
+    },
+    "openid-caep-specification-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID Continuous Access Evaluation Profile 1.0",
+      "url": "https://openid.net/specs/openid-caep-specification-1_0.html"
+    },
+    "openid-caep-specification-1_0-ID1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID Continuous Access Evaluation Profile 1.0",
+      "url": "https://openid.net/specs/openid-caep-specification-1_0-ID1.html"
+    },
+    "openid-client-initiated-backchannel-authentication-core-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Connect Client Initiated Backchannel Authentication Flow – Core",
+      "url": "https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html"
+    },
+    "openid-connect-4-ida-claims-1_0-final": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Connect for Identity Assurance Claims Registration 1.0",
+      "url": "https://openid.net/specs/openid-connect-4-ida-claims-1_0-final.html"
+    },
+    "openid-connect-4-identity-assurance-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID Connect for Identity Assurance 1.0.",
+      "url": "https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html"
+    },
+    "openid-connect-4-identity-assurance-1_0-ID4": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID Connect for Identity Assurance 1.0.",
+      "url": "https://openid.net/specs/openid-connect-4-identity-assurance-1_0-ID4.html"
+    },
+    "openid-connect-4-identity-assurance-1_0-errata1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0-errata1",
+      "stage": "Other",
+      "title": "First Errata Set for OpenID Connect for Identity Assurance 1.0",
+      "url": "https://openid.net/specs/openid-connect-4-identity-assurance-1_0-errata1.html"
+    },
+    "openid-connect-4-identity-assurance-1_0-final": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Connect for Identity Assurance 1.0",
+      "url": "https://openid.net/specs/openid-connect-4-identity-assurance-1_0-final.html"
+    },
+    "openid-connect-account-porting-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID Connect Account Porting",
+      "url": "https://openid.net/specs/openid-connect-account-porting-1_0.html"
+    },
+    "openid-connect-account-porting-1_0-ID1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID Connect Account Porting",
+      "url": "https://openid.net/specs/openid-connect-account-porting-1_0-ID1.html"
+    },
+    "openid-connect-backchannel-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Connect Back-Channel Logout",
+      "url": "https://openid.net/specs/openid-connect-backchannel-1_0.html"
+    },
+    "openid-connect-core-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Connect Core",
+      "url": "https://openid.net/specs/openid-connect-core-1_0.html"
+    },
+    "openid-connect-discovery-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Connect Discovery",
+      "url": "https://openid.net/specs/openid-connect-discovery-1_0.html"
+    },
+    "openid-connect-eap-acr-values-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "EAP ACR Values",
+      "url": "https://openid.net/specs/openid-connect-eap-acr-values-1_0.html"
+    },
+    "openid-connect-frontchannel-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Connect Front-Channel Logout",
+      "url": "https://openid.net/specs/openid-connect-frontchannel-1_0.html"
+    },
+    "openid-connect-migration-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID 2.0 to OpenID Connect Migration 1.0",
+      "url": "https://openid.net/specs/openid-connect-migration-1_0.html"
+    },
+    "openid-connect-modrna-authentication-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID Connect MODRNA Authentication Profile",
+      "url": "https://openid.net/specs/openid-connect-modrna-authentication-1_0.html"
+    },
+    "openid-connect-modrna-authentication-1_0-ID1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID Connect MODRNA Authentication Profile",
+      "url": "https://openid.net/specs/openid-connect-modrna-authentication-1_0-ID1.html"
+    },
+    "openid-connect-native-sso-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID Connect Native SSO for Mobile Apps",
+      "url": "https://openid.net/specs/openid-connect-native-sso-1_0.html"
+    },
+    "openid-connect-native-sso-1_0-ID2": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID Connect Native SSO for Mobile Apps Second Implementer’s Draft",
+      "url": "https://openid.net/specs/openid-connect-native-sso-1_0-ID2.html"
+    },
+    "openid-connect-prompt-create-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "Initiating User Registration via OpenID Connect",
+      "url": "https://openid.net/specs/openid-connect-prompt-create-1_0.html"
+    },
+    "openid-connect-registration-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Connect Dynamic Client Registration",
+      "url": "https://openid.net/specs/openid-connect-registration-1_0.html"
+    },
+    "openid-connect-rp-metadata-choices-1_0-final": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Connect Relying Party Metadata Choices 1.0",
+      "url": "https://openid.net/specs/openid-connect-rp-metadata-choices-1_0-final.html"
+    },
+    "openid-connect-rpinitiated-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Connect RP-Initiated Logout",
+      "url": "https://openid.net/specs/openid-connect-rpinitiated-1_0.html"
+    },
+    "openid-connect-self-issued-v2-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "Self-Issued OpenID Provider V2",
+      "url": "https://openid.net/specs/openid-connect-self-issued-v2-1_0.html"
+    },
+    "openid-connect-self-issued-v2-1_0-ID1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "Self-Issued OpenID Provider V2",
+      "url": "https://openid.net/specs/openid-connect-self-issued-v2-1_0-ID1.html"
+    },
+    "openid-connect-session-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Connect Session Management",
+      "url": "https://openid.net/specs/openid-connect-session-1_0.html"
+    },
+    "openid-connect-token-bound-authentication-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "Token Bound Authentication",
+      "url": "https://openid.net/specs/openid-connect-token-bound-authentication-1_0.html"
+    },
+    "openid-connect-token-bound-authentication-1_0-ID1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "Token Bound Authentication",
+      "url": "https://openid.net/specs/openid-connect-token-bound-authentication-1_0-ID1.html"
+    },
+    "openid-connect-unmet-authentication-requirements-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Connect Core Error Code unmet_authentication_requirements",
+      "url": "https://openid.net/specs/openid-connect-unmet-authentication-requirements-1_0.html"
+    },
+    "openid-connect-user-questioning-api-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID Connect User Questioning API",
+      "url": "https://openid.net/specs/openid-connect-user-questioning-api-1_0.html"
+    },
+    "openid-connect-user-questioning-api-1_0-ID2": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID Connect User Questioning API",
+      "url": "https://openid.net/specs/openid-connect-user-questioning-api-1_0-ID2.html"
+    },
+    "openid-federation-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Federation",
+      "url": "https://openid.net/specs/openid-federation-1_0.html"
+    },
+    "openid-federation-1_0-final": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Federation 1.0",
+      "url": "https://openid.net/specs/openid-federation-1_0-final.html"
+    },
+    "openid-federation-1_1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_1",
+      "stage": "Final",
+      "title": "OpenID Federation 1.1",
+      "url": "https://openid.net/specs/openid-federation-1_1.html"
+    },
+    "openid-federation-connect-1_1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_1",
+      "stage": "Final",
+      "title": "OpenID Federation for OpenID Connect 1.1",
+      "url": "https://openid.net/specs/openid-federation-connect-1_1.html"
+    },
+    "openid-financial-api-ciba": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "",
+      "stage": "Implementer's Draft",
+      "title": "Financial-grade API: Client Initiated Backchannel Authentication Profile",
+      "url": "https://openid.net/specs/openid-financial-api-ciba.html"
+    },
+    "openid-financial-api-ciba-ID1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "",
+      "stage": "Implementer's Draft",
+      "title": "Financial-grade API: Client Initiated Backchannel Authentication Profile",
+      "url": "https://openid.net/specs/openid-financial-api-ciba-ID1.html"
+    },
+    "openid-financial-api-part-1-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "Financial-grade API Security Profile (FAPI) 1.0 – Part 1: Baseline",
+      "url": "https://openid.net/specs/openid-financial-api-part-1-1_0.html"
+    },
+    "openid-financial-api-part-2-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "Financial-grade API Security Profile (FAPI) 1.0 – Part 2: Advanced",
+      "url": "https://openid.net/specs/openid-financial-api-part-2-1_0.html"
+    },
+    "openid-heart-fhir-oauth2-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "Health Relationship Trust Profile for Fast Healthcare Interoperability Resources (FHIR) OAuth 2.0 Scopes",
+      "url": "https://openid.net/specs/openid-heart-fhir-oauth2-1_0.html"
+    },
+    "openid-heart-fhir-oauth2-1_0-ID2": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "Health Relationship Trust Profile for Fast Healthcare Interoperability Resources (FHIR) OAuth 2.0 Scopes",
+      "url": "https://openid.net/specs/openid-heart-fhir-oauth2-1_0-ID2.html"
+    },
+    "openid-heart-fhir-uma2-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "Health Relationship Trust Profile for Fast Healthcare Interoperability Resources (FHIR) UMA 2 Resources",
+      "url": "https://openid.net/specs/openid-heart-fhir-uma2-1_0.html"
+    },
+    "openid-heart-fhir-uma2-1_0-ID1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "Health Relationship Trust Profile for Fast Healthcare Interoperability Resources (FHIR) UMA 2 Resources",
+      "url": "https://openid.net/specs/openid-heart-fhir-uma2-1_0-ID1.html"
+    },
+    "openid-heart-oauth2-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "Health Relationship Trust Profile for OAuth 2.0",
+      "url": "https://openid.net/specs/openid-heart-oauth2-1_0.html"
+    },
+    "openid-heart-oauth2-1_0-ID3": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "Health Relationship Trust Profile for OAuth 2.0",
+      "url": "https://openid.net/specs/openid-heart-oauth2-1_0-ID3.html"
+    },
+    "openid-heart-uma2-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "Health Relationship Trust Profile for User-Managed Access 2.0",
+      "url": "https://openid.net/specs/openid-heart-uma2-1_0.html"
+    },
+    "openid-heart-uma2-1_0-ID1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "Health Relationship Trust Profile for User-Managed Access 2.0",
+      "url": "https://openid.net/specs/openid-heart-uma2-1_0-ID1.html"
+    },
+    "openid-ida-verified-claims-1_0-errata1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0-errata1",
+      "stage": "Other",
+      "title": "First Errata Set for OpenID Identity Assurance Schema Definition 1.0",
+      "url": "https://openid.net/specs/openid-ida-verified-claims-1_0-errata1.html"
+    },
+    "openid-ida-verified-claims-1_0-final": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Identity Assurance Schema Definition 1.0",
+      "url": "https://openid.net/specs/openid-ida-verified-claims-1_0-final.html"
+    },
+    "openid-igov-oauth2-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "International Government Assurance Profile (iGov) for OAuth 2.0",
+      "url": "https://openid.net/specs/openid-igov-oauth2-1_0.html"
+    },
+    "openid-igov-oauth2-1_0-ID1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "International Government Assurance Profile (iGov) for OAuth 2.0",
+      "url": "https://openid.net/specs/openid-igov-oauth2-1_0-ID1.html"
+    },
+    "openid-igov-openid-connect-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "International Government Assurance Profile (iGov) for OpenID Connect 1.0",
+      "url": "https://openid.net/specs/openid-igov-openid-connect-1_0.html"
+    },
+    "openid-igov-openid-connect-1_0-ID1": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "International Government Assurance Profile (iGov) for OpenID Connect 1.0",
+      "url": "https://openid.net/specs/openid-igov-openid-connect-1_0-ID1.html"
+    },
+    "openid-provider-authentication-policy-extension-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Provider Authentication Policy Extension 1.0",
+      "url": "https://openid.net/specs/openid-provider-authentication-policy-extension-1_0.html"
+    },
+    "openid-risc-1_0-final": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID RISC Profile Specification 1.0",
+      "url": "https://openid.net/specs/openid-risc-1_0-final.html"
+    },
+    "openid-risc-profile-specification-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID RISC Profile Specification 1.0",
+      "url": "https://openid.net/specs/openid-risc-profile-specification-1_0.html"
+    },
+    "openid-risc-profile-specification-1_0-ID2": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID RISC Profile Specification 1.0",
+      "url": "https://openid.net/specs/openid-risc-profile-specification-1_0-ID2.html"
+    },
+    "openid-sharedsignals-framework-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Implementer's Draft",
+      "title": "OpenID Shared Signals Framework Specification 1.0",
+      "url": "https://openid.net/specs/openid-sharedsignals-framework-1_0.html"
+    },
+    "openid-sharedsignals-framework-1_0-final": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Shared Signals and Events Framework Specification 1.0",
+      "url": "https://openid.net/specs/openid-sharedsignals-framework-1_0-final.html"
+    },
+    "openid-simple-registration-extension-1_0": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID Simple Registration Extension 1.0",
+      "url": "https://openid.net/specs/openid-simple-registration-extension-1_0.html"
+    },
+    "openid-simple-registration-extension-1_1-01": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_1-01",
+      "stage": "Draft",
+      "title": "OpenID Simple Registration Extension 1.1 – Draft 1",
+      "url": "https://openid.net/specs/openid-simple-registration-extension-1_1-01.html"
+    },
+    "openid4vc-high-assurance-interoperability-profile-1_0-final": {
+      "changedAt": "2026-11-12T03:11:02Z",
+      "listed": true,
+      "revision": "1_0",
+      "stage": "Final",
+      "title": "OpenID4VC High Assurance Interoperability Profile (HAIP)",
+      "url": "https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0-final.html"
+    }
+  },
+  "lastSuccess": "2026-11-12T03:13:37Z",
+  "listing": {},
+  "listingParserVersion": 2,
+  "version": 1
+}
