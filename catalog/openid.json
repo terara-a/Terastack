@@ -2,7 +2,7 @@
   "documents": {
     "authorization-api-1_0": {
       "changedAt": "2026-11-12T03:11:09Z",
-      "checkedAt": "2026-11-12T03:11:09Z",
+      "checkedAt": "2026-11-16T02:19:17Z",
       "etag": "\"3bb64-6482a0d307ee2\"",
       "lastModified": "Mon, 12 Jan 2026 05:21:47 GMT",
       "listed": true,
@@ -14,7 +14,7 @@
     },
     "authorization-api-1_0-01": {
       "changedAt": "2026-11-12T03:11:17Z",
-      "checkedAt": "2026-11-12T03:11:17Z",
+      "checkedAt": "2026-11-16T02:19:27Z",
       "etag": "\"19b5b-6224feb2c2799\"",
       "lastModified": "Tue, 17 Sep 2024 12:35:03 GMT",
       "listed": true,
@@ -26,7 +26,7 @@
     },
     "fapi-attacker-model-2_0-final": {
       "changedAt": "2026-11-12T03:11:23Z",
-      "checkedAt": "2026-11-12T03:11:23Z",
+      "checkedAt": "2026-11-16T02:19:35Z",
       "etag": "\"126dc-62ec1cdb4adc0\"",
       "lastModified": "Sat, 22 Feb 2025 21:29:35 GMT",
       "listed": true,
@@ -38,7 +38,7 @@
     },
     "fapi-grant-management": {
       "changedAt": "2026-11-12T03:11:28Z",
-      "checkedAt": "2026-11-12T03:11:28Z",
+      "checkedAt": "2026-11-16T02:19:42Z",
       "etag": "\"24f-65140e2e3d1a2\"",
       "lastModified": "Thu, 07 May 2026 21:23:06 GMT",
       "listed": true,
@@ -50,7 +50,7 @@
     },
     "fapi-message-signing-2_0-final": {
       "changedAt": "2026-11-12T03:11:35Z",
-      "checkedAt": "2026-11-12T03:11:35Z",
+      "checkedAt": "2026-11-16T02:19:49Z",
       "etag": "\"14d59-63fb3363314a7\"",
       "lastModified": "Fri, 26 Sep 2025 12:13:21 GMT",
       "listed": true,
@@ -62,7 +62,7 @@
     },
     "fapi-security-profile-2_0-final": {
       "changedAt": "2026-11-12T03:11:41Z",
-      "checkedAt": "2026-11-12T03:11:41Z",
+      "checkedAt": "2026-11-16T02:19:55Z",
       "etag": "\"24c46-62ec1cdb4adc0\"",
       "lastModified": "Sat, 22 Feb 2025 21:29:35 GMT",
       "listed": true,
@@ -74,7 +74,7 @@
     },
     "fastfed-core-1_0-03": {
       "changedAt": "2026-11-12T03:11:48Z",
-      "checkedAt": "2026-11-12T03:11:48Z",
+      "checkedAt": "2026-11-16T02:20:02Z",
       "etag": "\"29d2e-5b2bf1ae0efc0\"",
       "lastModified": "Wed, 28 Oct 2020 18:12:23 GMT",
       "listed": true,
@@ -86,7 +86,7 @@
     },
     "fastfed-core-1_0-ID1": {
       "changedAt": "2026-11-12T03:11:56Z",
-      "checkedAt": "2026-11-12T03:11:56Z",
+      "checkedAt": "2026-11-16T02:20:10Z",
       "etag": "\"29d2e-5b2bf1ae0efc0\"",
       "lastModified": "Wed, 28 Oct 2020 18:12:23 GMT",
       "listed": true,
@@ -98,7 +98,7 @@
     },
     "fastfed-saml-1_0-03": {
       "changedAt": "2026-11-12T03:12:06Z",
-      "checkedAt": "2026-11-12T03:12:06Z",
+      "checkedAt": "2026-11-16T02:20:18Z",
       "etag": "\"e167-5b2bf1ae0efc0\"",
       "lastModified": "Wed, 28 Oct 2020 18:12:23 GMT",
       "listed": true,
@@ -110,7 +110,7 @@
     },
     "fastfed-saml-1_0-ID1": {
       "changedAt": "2026-11-12T03:12:14Z",
-      "checkedAt": "2026-11-12T03:12:14Z",
+      "checkedAt": "2026-11-16T02:20:28Z",
       "etag": "\"e167-5b2bf1ae0efc0\"",
       "lastModified": "Wed, 28 Oct 2020 18:12:23 GMT",
       "listed": true,
@@ -122,7 +122,7 @@
     },
     "fastfed-scim-1_0-03": {
       "changedAt": "2026-11-12T03:12:23Z",
-      "checkedAt": "2026-11-12T03:12:23Z",
+      "checkedAt": "2026-11-16T02:20:33Z",
       "etag": "\"12c7c-5b2bf1ae0efc0\"",
       "lastModified": "Wed, 28 Oct 2020 18:12:23 GMT",
       "listed": true,
@@ -134,7 +134,7 @@
     },
     "fastfed-scim-1_0-ID1": {
       "changedAt": "2026-11-12T03:12:33Z",
-      "checkedAt": "2026-11-12T03:12:33Z",
+      "checkedAt": "2026-11-16T02:20:39Z",
       "etag": "\"12c7c-5b2bf1ae0efc0\"",
       "lastModified": "Wed, 28 Oct 2020 18:12:23 GMT",
       "listed": true,
@@ -146,7 +146,7 @@
     },
     "oauth-v2-form-post-response-mode-1_0": {
       "changedAt": "2026-11-12T03:12:42Z",
-      "checkedAt": "2026-11-12T03:12:42Z",
+      "checkedAt": "2026-11-16T02:20:48Z",
       "etag": "\"5d3a-514ba186fb580\"",
       "lastModified": "Mon, 27 Apr 2015 19:53:10 GMT",
       "listed": true,
@@ -961,63 +961,91 @@
       "url": "https://openid.net/specs/openid-risc-1_0-final.html"
     },
     "openid-risc-profile-specification-1_0": {
-      "changedAt": "2026-11-12T03:11:02Z",
+      "changedAt": "2026-11-16T02:18:20Z",
+      "checkedAt": "2026-11-16T02:18:20Z",
+      "etag": "\"95bc-5e310c3972e00\"",
+      "lastModified": "Tue, 05 Jul 2022 15:47:04 GMT",
       "listed": true,
       "revision": "1_0",
+      "sha256": "1238fb9381a545b6f990492b117c91c23fd80bd591b4f2a8dc4a6c67be4f2ffc",
       "stage": "Implementer's Draft",
       "title": "OpenID RISC Profile Specification 1.0",
       "url": "https://openid.net/specs/openid-risc-profile-specification-1_0.html"
     },
     "openid-risc-profile-specification-1_0-ID2": {
-      "changedAt": "2026-11-12T03:11:02Z",
+      "changedAt": "2026-11-16T02:18:29Z",
+      "checkedAt": "2026-11-16T02:18:29Z",
+      "etag": "\"95bc-5e310c3972e00\"",
+      "lastModified": "Tue, 05 Jul 2022 15:47:04 GMT",
       "listed": true,
       "revision": "1_0",
+      "sha256": "1238fb9381a545b6f990492b117c91c23fd80bd591b4f2a8dc4a6c67be4f2ffc",
       "stage": "Implementer's Draft",
       "title": "OpenID RISC Profile Specification 1.0",
       "url": "https://openid.net/specs/openid-risc-profile-specification-1_0-ID2.html"
     },
     "openid-sharedsignals-framework-1_0": {
-      "changedAt": "2026-11-12T03:11:02Z",
+      "changedAt": "2026-11-16T02:18:35Z",
+      "checkedAt": "2026-11-16T02:18:35Z",
+      "etag": "\"3c527-63d827e8b4755\"",
+      "lastModified": "Fri, 29 Aug 2025 15:15:38 GMT",
       "listed": true,
       "revision": "1_0",
+      "sha256": "240e1567017d628d835fa61f0c1cc75f566605f3decaa26a6742c33f7ecd4f16",
       "stage": "Implementer's Draft",
       "title": "OpenID Shared Signals Framework Specification 1.0",
       "url": "https://openid.net/specs/openid-sharedsignals-framework-1_0.html"
     },
     "openid-sharedsignals-framework-1_0-final": {
-      "changedAt": "2026-11-12T03:11:02Z",
+      "changedAt": "2026-11-16T02:18:44Z",
+      "checkedAt": "2026-11-16T02:18:44Z",
+      "etag": "\"3c527-63d827e8b3b9d\"",
+      "lastModified": "Fri, 29 Aug 2025 15:15:38 GMT",
       "listed": true,
       "revision": "1_0",
+      "sha256": "240e1567017d628d835fa61f0c1cc75f566605f3decaa26a6742c33f7ecd4f16",
       "stage": "Final",
       "title": "OpenID Shared Signals and Events Framework Specification 1.0",
       "url": "https://openid.net/specs/openid-sharedsignals-framework-1_0-final.html"
     },
     "openid-simple-registration-extension-1_0": {
-      "changedAt": "2026-11-12T03:11:02Z",
+      "changedAt": "2026-11-16T02:18:50Z",
+      "checkedAt": "2026-11-16T02:18:50Z",
+      "etag": "\"4424-43c026d591b40\"",
+      "lastModified": "Mon, 08 Oct 2007 22:03:49 GMT",
       "listed": true,
       "revision": "1_0",
+      "sha256": "edde22cf04ce20a068098777a9854ce1cd26fad0d0f084ca52e9d6adc5a8b290",
       "stage": "Final",
       "title": "OpenID Simple Registration Extension 1.0",
       "url": "https://openid.net/specs/openid-simple-registration-extension-1_0.html"
     },
     "openid-simple-registration-extension-1_1-01": {
-      "changedAt": "2026-11-12T03:11:02Z",
+      "changedAt": "2026-11-16T02:18:59Z",
+      "checkedAt": "2026-11-16T02:18:59Z",
+      "etag": "\"4608-43c026d591b40\"",
+      "lastModified": "Mon, 08 Oct 2007 22:03:49 GMT",
       "listed": true,
       "revision": "1_1-01",
+      "sha256": "c9fc44267024f339f0f68150a7bf8213ef5c38242047354ac0a61c2738553fa8",
       "stage": "Draft",
       "title": "OpenID Simple Registration Extension 1.1 – Draft 1",
       "url": "https://openid.net/specs/openid-simple-registration-extension-1_1-01.html"
     },
     "openid4vc-high-assurance-interoperability-profile-1_0-final": {
-      "changedAt": "2026-11-12T03:11:02Z",
+      "changedAt": "2026-11-16T02:19:10Z",
+      "checkedAt": "2026-11-16T02:19:10Z",
+      "etag": "\"24a0f-646ad54da42a5\"",
+      "lastModified": "Wed, 24 Dec 2025 07:08:47 GMT",
       "listed": true,
       "revision": "1_0",
+      "sha256": "3996e0479d06b72d6d68668b8ae3cd39fddfc29ae9220c0c3fead7dc060ec4fb",
       "stage": "Final",
       "title": "OpenID4VC High Assurance Interoperability Profile (HAIP)",
       "url": "https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0-final.html"
     }
   },
-  "lastSuccess": "2026-11-15T02:08:41Z",
+  "lastSuccess": "2026-11-16T02:20:48Z",
   "listing": {},
   "listingParserVersion": 2,
   "version": 1
