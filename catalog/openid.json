@@ -2,7 +2,7 @@
   "documents": {
     "authorization-api-1_0": {
       "changedAt": "2026-11-12T03:11:09Z",
-      "checkedAt": "2026-11-16T02:19:17Z",
+      "checkedAt": "2026-11-20T03:34:45Z",
       "etag": "\"3bb64-6482a0d307ee2\"",
       "lastModified": "Mon, 12 Jan 2026 05:21:47 GMT",
       "listed": true,
@@ -14,7 +14,7 @@
     },
     "authorization-api-1_0-01": {
       "changedAt": "2026-11-12T03:11:17Z",
-      "checkedAt": "2026-11-16T02:19:27Z",
+      "checkedAt": "2026-11-20T03:34:51Z",
       "etag": "\"19b5b-6224feb2c2799\"",
       "lastModified": "Tue, 17 Sep 2024 12:35:03 GMT",
       "listed": true,
@@ -26,7 +26,7 @@
     },
     "fapi-attacker-model-2_0-final": {
       "changedAt": "2026-11-12T03:11:23Z",
-      "checkedAt": "2026-11-16T02:19:35Z",
+      "checkedAt": "2026-11-20T03:35:01Z",
       "etag": "\"126dc-62ec1cdb4adc0\"",
       "lastModified": "Sat, 22 Feb 2025 21:29:35 GMT",
       "listed": true,
@@ -38,7 +38,7 @@
     },
     "fapi-grant-management": {
       "changedAt": "2026-11-12T03:11:28Z",
-      "checkedAt": "2026-11-16T02:19:42Z",
+      "checkedAt": "2026-11-20T03:35:07Z",
       "etag": "\"24f-65140e2e3d1a2\"",
       "lastModified": "Thu, 07 May 2026 21:23:06 GMT",
       "listed": true,
@@ -50,7 +50,7 @@
     },
     "fapi-message-signing-2_0-final": {
       "changedAt": "2026-11-12T03:11:35Z",
-      "checkedAt": "2026-11-16T02:19:49Z",
+      "checkedAt": "2026-11-20T03:35:15Z",
       "etag": "\"14d59-63fb3363314a7\"",
       "lastModified": "Fri, 26 Sep 2025 12:13:21 GMT",
       "listed": true,
@@ -62,7 +62,7 @@
     },
     "fapi-security-profile-2_0-final": {
       "changedAt": "2026-11-12T03:11:41Z",
-      "checkedAt": "2026-11-16T02:19:55Z",
+      "checkedAt": "2026-11-20T03:35:20Z",
       "etag": "\"24c46-62ec1cdb4adc0\"",
       "lastModified": "Sat, 22 Feb 2025 21:29:35 GMT",
       "listed": true,
@@ -878,7 +878,7 @@
     },
     "openid-ida-verified-claims-1_0-final": {
       "changedAt": "2026-11-15T02:08:01Z",
-      "checkedAt": "2026-11-15T02:08:01Z",
+      "checkedAt": "2026-11-20T03:32:53Z",
       "etag": "\"1e02c-6236fe98c5788\"",
       "lastModified": "Tue, 01 Oct 2024 20:10:26 GMT",
       "listed": true,
@@ -890,7 +890,7 @@
     },
     "openid-igov-oauth2-1_0": {
       "changedAt": "2026-11-15T02:08:07Z",
-      "checkedAt": "2026-11-15T02:08:07Z",
+      "checkedAt": "2026-11-20T03:33:03Z",
       "etag": "\"2ddb4-65335ea13f570\"",
       "lastModified": "Mon, 01 Jun 2026 19:08:05 GMT",
       "listed": true,
@@ -902,7 +902,7 @@
     },
     "openid-igov-oauth2-1_0-ID1": {
       "changedAt": "2026-11-15T02:08:16Z",
-      "checkedAt": "2026-11-15T02:08:16Z",
+      "checkedAt": "2026-11-20T03:33:08Z",
       "etag": "\"154bb-5785f72df0d00\"",
       "lastModified": "Tue, 16 Oct 2018 21:43:48 GMT",
       "listed": true,
@@ -914,7 +914,7 @@
     },
     "openid-igov-openid-connect-1_0": {
       "changedAt": "2026-11-15T02:08:24Z",
-      "checkedAt": "2026-11-15T02:08:24Z",
+      "checkedAt": "2026-11-20T03:33:15Z",
       "etag": "\"1ac69-6020b14230880\"",
       "lastModified": "Thu, 03 Aug 2023 21:01:06 GMT",
       "listed": true,
@@ -926,7 +926,7 @@
     },
     "openid-igov-openid-connect-1_0-ID1": {
       "changedAt": "2026-11-15T02:08:29Z",
-      "checkedAt": "2026-11-15T02:08:29Z",
+      "checkedAt": "2026-11-20T03:33:23Z",
       "etag": "\"f869-5785f72ee4f40\"",
       "lastModified": "Tue, 16 Oct 2018 21:43:49 GMT",
       "listed": true,
@@ -938,7 +938,7 @@
     },
     "openid-provider-authentication-policy-extension-1_0": {
       "changedAt": "2026-11-15T02:08:35Z",
-      "checkedAt": "2026-11-15T02:08:35Z",
+      "checkedAt": "2026-11-20T03:33:30Z",
       "etag": "\"dfb8-45f483aa4b740\"",
       "lastModified": "Tue, 30 Dec 2008 19:02:13 GMT",
       "listed": true,
@@ -950,7 +950,7 @@
     },
     "openid-risc-1_0-final": {
       "changedAt": "2026-11-15T02:08:41Z",
-      "checkedAt": "2026-11-15T02:08:41Z",
+      "checkedAt": "2026-11-20T03:33:36Z",
       "etag": "\"119a4-63d827e8b2fe5\"",
       "lastModified": "Fri, 29 Aug 2025 15:15:38 GMT",
       "listed": true,
@@ -962,7 +962,7 @@
     },
     "openid-risc-profile-specification-1_0": {
       "changedAt": "2026-11-16T02:18:20Z",
-      "checkedAt": "2026-11-16T02:18:20Z",
+      "checkedAt": "2026-11-20T03:33:45Z",
       "etag": "\"95bc-5e310c3972e00\"",
       "lastModified": "Tue, 05 Jul 2022 15:47:04 GMT",
       "listed": true,
@@ -974,7 +974,7 @@
     },
     "openid-risc-profile-specification-1_0-ID2": {
       "changedAt": "2026-11-16T02:18:29Z",
-      "checkedAt": "2026-11-16T02:18:29Z",
+      "checkedAt": "2026-11-20T03:33:55Z",
       "etag": "\"95bc-5e310c3972e00\"",
       "lastModified": "Tue, 05 Jul 2022 15:47:04 GMT",
       "listed": true,
@@ -986,7 +986,7 @@
     },
     "openid-sharedsignals-framework-1_0": {
       "changedAt": "2026-11-16T02:18:35Z",
-      "checkedAt": "2026-11-16T02:18:35Z",
+      "checkedAt": "2026-11-20T03:34:01Z",
       "etag": "\"3c527-63d827e8b4755\"",
       "lastModified": "Fri, 29 Aug 2025 15:15:38 GMT",
       "listed": true,
@@ -998,7 +998,7 @@
     },
     "openid-sharedsignals-framework-1_0-final": {
       "changedAt": "2026-11-16T02:18:44Z",
-      "checkedAt": "2026-11-16T02:18:44Z",
+      "checkedAt": "2026-11-20T03:34:08Z",
       "etag": "\"3c527-63d827e8b3b9d\"",
       "lastModified": "Fri, 29 Aug 2025 15:15:38 GMT",
       "listed": true,
@@ -1010,7 +1010,7 @@
     },
     "openid-simple-registration-extension-1_0": {
       "changedAt": "2026-11-16T02:18:50Z",
-      "checkedAt": "2026-11-16T02:18:50Z",
+      "checkedAt": "2026-11-20T03:34:17Z",
       "etag": "\"4424-43c026d591b40\"",
       "lastModified": "Mon, 08 Oct 2007 22:03:49 GMT",
       "listed": true,
@@ -1022,7 +1022,7 @@
     },
     "openid-simple-registration-extension-1_1-01": {
       "changedAt": "2026-11-16T02:18:59Z",
-      "checkedAt": "2026-11-16T02:18:59Z",
+      "checkedAt": "2026-11-20T03:34:26Z",
       "etag": "\"4608-43c026d591b40\"",
       "lastModified": "Mon, 08 Oct 2007 22:03:49 GMT",
       "listed": true,
@@ -1034,7 +1034,7 @@
     },
     "openid4vc-high-assurance-interoperability-profile-1_0-final": {
       "changedAt": "2026-11-16T02:19:10Z",
-      "checkedAt": "2026-11-16T02:19:10Z",
+      "checkedAt": "2026-11-20T03:34:35Z",
       "etag": "\"24a0f-646ad54da42a5\"",
       "lastModified": "Wed, 24 Dec 2025 07:08:47 GMT",
       "listed": true,
@@ -1045,7 +1045,7 @@
       "url": "https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0-final.html"
     }
   },
-  "lastSuccess": "2026-11-19T03:45:21Z",
+  "lastSuccess": "2026-11-20T03:35:20Z",
   "listing": {},
   "listingParserVersion": 2,
   "version": 1
