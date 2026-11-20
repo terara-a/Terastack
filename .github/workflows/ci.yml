@@ -18,4 +18,5 @@ jobs:
       - run: npm test
       - run: npm run test:openid
       - run: npm run test:pkce
+      - run: npm run test:ephemeral
       - run: npm run test:merge-catalog

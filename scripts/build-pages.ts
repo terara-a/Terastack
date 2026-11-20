@@ -31,8 +31,9 @@ export function publicData(state: any, reports: any[], reviewed: any = {}, candi
     const status = openIDReviewState(decision,doc);
     if (status === 'excluded') { excluded++; return []; }
     const reason = status === 'confirmed' ? decision.reason : status === 'needs_review'
-      ? `以前の確認理由：${decision.reason}` : '公式仕様一覧への掲載。関連性・内容は未確認です。';
+      ? `以前の確認理由：${decision.reason}` : doc.discovery === 'additional' ? '公式公開URLを追加監視しています。関連性・内容は未確認です。' : '公式仕様一覧への掲載。関連性・内容は未確認です。';
     return [{name,type:'OpenID',source:'OpenID Foundation',rev:String(doc.revision ?? ''),title:status === 'confirmed' ? decision.title : doc.title,reason,url:doc.url,status,stage:String(doc.stage ?? 'Other'),checkedAt:doc.checkedAt ?? null,
+      ...(doc.discovery === 'additional' ? {discovery:'additional'} : {}),
       ...(decision ? {reviewedAt:decision.reviewedAt,...(decision.reviewedBy ? {reviewedBy:decision.reviewedBy} : {})} : {}),
       ...(status === 'needs_review' ? {reviewNotice:'対象版または本文が確認時と一致しません。原文を再確認してください。'} : {})}];
   });
