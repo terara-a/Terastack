@@ -285,9 +285,29 @@ def stamp(value):
     return datetime.fromtimestamp(value, timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z')
 
 
+def additional_specs(root):
+    path = Path(root) / 'collector/openid-additional.json'
+    entries = json.loads(path.read_text()) if path.exists() else {}
+    if not isinstance(entries, dict):
+        raise ValueError('Expected additional OpenID specification object')
+    result = {}
+    for name, doc in entries.items():
+        if (not isinstance(doc, dict) or not re.fullmatch(r'[A-Za-z0-9_.-]+', name)
+                or doc.get('url') != f'{ORIGIN}/specs/{name}.html'
+                or not isinstance(doc.get('title'), str) or not doc['title'].strip()
+                or not isinstance(doc.get('revision'), str)
+                or doc.get('stage') not in ('Final', "Implementer's Draft", 'Draft', 'Other')
+                or not isinstance(doc.get('reason'), str) or not doc['reason'].strip()):
+            raise ValueError('Invalid additional OpenID specification')
+        result[name] = {key: doc[key] for key in ['url', 'title', 'revision', 'stage']}
+        result[name].update(listed=True, discovery='additional')
+    return result
+
+
 def collect(root='.', http=None, limit=20):
     if not isinstance(limit, int) or not 1 <= limit <= 20:
         raise ValueError('OpenID body limit must be between 1 and 20')
+    additional = additional_specs(root)  # Validate curated configuration before any HTTP requests.
     path = Path(root) / 'catalog/openid.json'
     previous = json.loads(path.read_text()) if path.exists() else {'version': 1, 'documents': {}, 'listing': {}}
     if previous.get('version') != 1 or not isinstance(previous.get('documents'), dict):
@@ -309,16 +329,24 @@ def collect(root='.', http=None, limit=20):
         body, headers = http.get(LIST, cached)
         if body is not None:
             entries = parse_listing(body.decode('utf-8'))
-            for doc in state['documents'].values():
-                doc['listed'] = False
-            for name, entry in entries.items():
-                old = previous['documents'].get(name, {})
-                metadata_changed = any(old.get(key) != value for key, value in entry.items())
-                state['documents'][name] = {**old, **entry}
-                if metadata_changed:
-                    state['documents'][name]['changedAt'] = stamp(http.clock())
             state['listing'] = headers
             state['listingParserVersion'] = LISTING_PARSER_VERSION
+        else:
+            entries = {name: {key: doc[key] for key in ['url', 'title', 'revision', 'stage', 'listed']}
+                       for name, doc in previous['documents'].items() if doc.get('listed') and doc.get('discovery') != 'additional'}
+        # The official list wins when an extra URL is subsequently listed there.
+        for name, entry in additional.items():
+            entries.setdefault(name, entry)
+        for doc in state['documents'].values():
+            doc['listed'] = False
+        for name, entry in entries.items():
+            old = previous['documents'].get(name, {})
+            record = {**old, **entry}
+            if 'discovery' not in entry:
+                record.pop('discovery', None)
+            if any(old.get(key) != record.get(key) for key in ['url', 'title', 'revision', 'stage', 'listed', 'discovery']):
+                record['changedAt'] = stamp(http.clock())
+            state['documents'][name] = record
         active = [(name, doc) for name, doc in state['documents'].items() if doc.get('listed')]
         # Unfetched documents first; oldest checked versions next. Daily bounded rotation.
         for name, doc in sorted(active, key=lambda item: (item[1].get('checkedAt', ''), item[0]))[:limit]:

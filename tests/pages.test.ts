@@ -103,3 +103,9 @@ test('legacy OpenID review without attribution remains supported without inventi
  const reviews=openidReviews();delete reviews[`openid:${openidName}`].reviewedBy;
  const data=withReview(reviews);assert.equal(data.documents[0].status,'confirmed');assert.ok(!('reviewedBy' in data.documents[0]));
 });
+
+test('additional OpenID URL is visible without falsely claiming official-list membership or confirmation',()=>{
+ const doc={...openidDoc,discovery:'additional'};
+ const data=publicData({version:2,index:{}},[],{}, {},null,{documents:{[openidName]:doc}});
+ assert.equal(data.documents[0].status,'listed');assert.equal(data.documents[0].discovery,'additional');assert.ok(data.documents[0].reason.includes('追加監視'));assert.ok(!data.documents[0].reason.includes('公式仕様一覧'));assert.equal(data.review.confirmed,0);
+});

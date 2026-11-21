@@ -456,6 +456,17 @@
       "title": "EAP ACR Values",
       "url": "https://openid.net/specs/openid-connect-eap-acr-values-1_0.html"
     },
+    "openid-connect-ephemeral-subject-identifier-1_0": {
+      "changedAt": "2026-11-20T09:50:25Z",
+      "checkedAt": "2026-11-20T09:50:25Z",
+      "discovery": "additional",
+      "listed": true,
+      "revision": "1_0",
+      "sha256": "ac4f9c4366b6e57e638217260c10499ce3acf3f46740fda807e3f898922d30c0",
+      "stage": "Final",
+      "title": "OpenID Connect Ephemeral Subject Identifier 1.0",
+      "url": "https://openid.net/specs/openid-connect-ephemeral-subject-identifier-1_0.html"
+    },
     "openid-connect-frontchannel-1_0": {
       "changedAt": "2026-11-13T02:47:48Z",
       "checkedAt": "2026-11-18T03:48:16Z",

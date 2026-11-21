@@ -21,7 +21,7 @@ Pages では次を区別します。
 
 ## OpenID Foundation の仕様
 
-公式の[仕様一覧](https://openid.net/developers/specs/)も日次収集対象です。`daily` / `backfill` で一覧を確認し、仕様本文は最大20件ずつ巡回します。保存先は `catalog/openid.json`、Pagesでは「出典 → OpenID Foundation」で表示できます。公式一覧への掲載と、人による内容確認は区別します。
+公式の[仕様一覧](https://openid.net/developers/specs/)も日次収集対象です。`daily` / `backfill` で一覧を確認し、仕様本文は最大20件ずつ巡回します。保存先は `catalog/openid.json`、Pagesでは「出典 → OpenID Foundation」で表示できます。公式一覧への掲載と、人による内容確認は区別します。Ephemeral Subject Identifier 1.0は、この1件だけを追加URLとして監視しています（公式一覧未掲載）。
 
 リクエストは直列化し、起動時30〜180秒、各応答後5〜10秒の待ち時間を入れます。robots.txtの指定が長ければそちらを採用し、429 / 503のRetry-Afterは次回実行にも引き継ぎます。本文は保存せずハッシュとメタデータだけを保持します。[収集方法と初回確認の注意](docs/openid.md)を参照してください。
 
@@ -109,6 +109,7 @@ Node.js 24 以上。CPU 候補抽出には Python 3.12 を使用します。既�
 npm ci
 npm test
 npm run test:pkce
+npm run test:ephemeral
 npm run test:openid
 npm run test:pages
 npm run test:merge-catalog
@@ -145,10 +146,18 @@ Pagesでは認可要求・コード発行・verifierによる交換・リソー�
 
 デモは上記のPagesローカル確認手順で動作します。サンプルコードのページには、デモで使用するプロトコル処理とクライアント処理を掲載しています。
 
+### Ephemeral Subject Identifier
+
+- [認証要求ごとのsubを比べるデモ](https://terara-a.github.io/Terastack/samples/ephemeral-subject/)
+- [別ページのサンプルコード](https://terara-a.github.io/Terastack/samples/ephemeral-subject/code.html)
+- [仕様との対応・実行手順・動作範囲](docs/ephemeral-subject.md)
+
+認可コード + PKCE、署名付きID TokenとUserInfoの検証を含むブラウザ内モデルです。public/pairwise/ephemeral、固定email・Cookieによる照合、架空の属性による年齢ゲートを比較できます。実際のログインや年齢確認は提供しません。
+
 ## 設定不要になった項目
 
 有料モデル API 分類は廃止し、CPU 候補抽出だけを使用します。`CLASSIFIER_*` の Variables／Secrets と `CLASSIFICATION_ENGINE` は削除できます。GHA の `models` モード・`max_usd` 引数は廃止しました。実行時は `mode` と `limit` だけ指定してください。
 
 ## 未実装の範囲
 
-仕様本文の版別保存・節単位の差分、RFC の更新／廃止関係や正誤表の自動照合、確認結果からの自動学習、JWT/DPoP 等の追加サンプル、日次のサンプルコード生成は未実装です。現状は仕様の発見・候補抽出・閲覧と、デモ主体による認可コード + PKCE サンプルまでを提供します。
+仕様本文の版別保存・節単位の差分、RFC の更新／廃止関係や正誤表の自動照合、確認結果からの自動学習、JWT/DPoP 等の専用サンプル、日次のサンプルコード生成は未実装です。現状は仕様の発見・候補抽出・閲覧と、デモ主体による認可コード + PKCE とEphemeral Subject Identifierのサンプルまでを提供します。

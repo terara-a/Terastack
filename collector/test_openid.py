@@ -105,6 +105,44 @@ class OpenIDTests(unittest.TestCase):
             self.assertNotIn('If-none-match',opener.calls[1][2])
             self.assertEqual(json.loads(path.read_text())['listingParserVersion'],2)
 
+    def test_additional_spec_is_monitored_on_304_and_removal_does_not_resurrect_it(self):
+        with tempfile.TemporaryDirectory() as root:
+            config=Path(root)/'collector/openid-additional.json';config.parent.mkdir()
+            config.write_text(json.dumps({'extra-01':{'url':'https://openid.net/specs/extra-01.html','title':'Extra spec','revision':'01','stage':'Final','reason':'Official list has not linked it'}}))
+            http,_,_=client([Response(b''),Response(HTML.encode(),headers={'ETag':'"list"'}),Response(b'extra',headers={'ETag':'"extra"'}),Response(b'core'),Response(b'unknown')])
+            collect(root,http)
+            path=Path(root)/'catalog/openid.json';data=json.loads(path.read_text());self.assertEqual(data['documents']['extra-01']['discovery'],'additional')
+            http,opener,clock=client([Response(b''),Response(code=304),Response(code=304)]);clock.now+=86400
+            collect(root,http,limit=1)
+            self.assertEqual(opener.calls[-1][1],'https://openid.net/specs/extra-01.html');self.assertEqual(opener.calls[-1][2]['If-none-match'],'"extra"')
+            self.assertTrue(json.loads(path.read_text())['documents']['extra-01']['listed'])
+            config.unlink()
+            http,_,clock=client([Response(b''),Response(code=304),Response(b'updated core')]);clock.now+=172800
+            collect(root,http,limit=1)
+            self.assertFalse(json.loads(path.read_text())['documents']['extra-01']['listed'])
+
+    def test_official_listing_takes_precedence_and_fetches_duplicate_extra_once(self):
+        with tempfile.TemporaryDirectory() as root:
+            config=Path(root)/'collector/openid-additional.json';config.parent.mkdir()
+            config.write_text(json.dumps({'extra-01':{'url':'https://openid.net/specs/extra-01.html','title':'Manual title','revision':'01','stage':'Draft','reason':'Initially absent'}}))
+            initial,_,_=client([Response(b''),Response(HTML.encode()),Response(b'extra'),Response(b'core'),Response(b'unknown')]);collect(root,initial)
+            self.assertEqual(json.loads((Path(root)/'catalog/openid.json').read_text())['documents']['extra-01']['discovery'],'additional')
+            page='<h2>Final</h2><ul><li><a href="/specs/extra-01.html">Official title</a></li></ul>'
+            http,opener,_=client([Response(b''),Response(page.encode(),headers={'ETag':'"list"'}),Response(b'extra')]);collect(root,http)
+            doc=json.loads((Path(root)/'catalog/openid.json').read_text())['documents']['extra-01']
+            self.assertEqual(doc['title'],'Official title');self.assertEqual(doc['stage'],'Final');self.assertNotIn('discovery',doc);self.assertEqual(len(opener.calls),3)
+            http,_,_=client([Response(b''),Response(code=304),Response(b'extra')]);collect(root,http)
+            self.assertNotIn('discovery',json.loads((Path(root)/'catalog/openid.json').read_text())['documents']['extra-01'])
+
+    def test_invalid_additional_configuration_fails_before_network(self):
+        with tempfile.TemporaryDirectory() as root:
+            config=Path(root)/'collector/openid-additional.json';config.parent.mkdir()
+            base={'url':'https://openid.net/specs/extra.html','title':'Extra','stage':'Final','revision':'','reason':'Explicit exception'}
+            for data in [[],{'extra':{**base,'url':'https://evil.example/extra.html'}},{'extra':{**base,'url':'http://openid.net/specs/extra.html'}},{'../extra':base},{'extra':{**base,'reason':''}}]:
+                config.write_text(json.dumps(data));http,opener,_=client([])
+                with self.assertRaises(ValueError):collect(root,http)
+                self.assertEqual(opener.calls,[])
+
     def test_pacing_start_jitter_robots_and_conditional_get(self):
         http, opener, _ = client([Response(b'User-agent: Terastack\nCrawl-delay: 12\n'), Response(HTML.encode(), headers={'ETag':'"index"'}), HTTPError(LIST, 304, '', Message(), io.BytesIO())])
         http.load_robots()

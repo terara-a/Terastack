@@ -20,6 +20,7 @@ export function validateData(path: string, value: any): void {
     if (value.lastSuccess !== undefined && !Number.isFinite(Date.parse(value.lastSuccess))) throw new Error('Invalid OpenID checkpoint');
     for (const [name, doc] of Object.entries(value.documents) as [string, any][]) {
       if (!/^[A-Za-z0-9_.-]+$/.test(name) || !doc || doc.url !== `https://openid.net/specs/${name}.html` || typeof doc.title !== 'string' || typeof doc.revision !== 'string' || typeof doc.listed !== 'boolean' || !['Final',"Implementer's Draft",'Draft','Other'].includes(doc.stage)) throw new Error('Invalid OpenID document');
+      if (doc.discovery !== undefined && doc.discovery !== 'additional') throw new Error('Invalid OpenID discovery source');
       if (doc.sha256 !== undefined && !/^[a-f0-9]{64}$/.test(doc.sha256)) throw new Error('Invalid OpenID content hash');
     }
   }

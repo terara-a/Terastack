@@ -1,0 +1,9 @@
+{
+  "openid-connect-ephemeral-subject-identifier-1_0": {
+    "url": "https://openid.net/specs/openid-connect-ephemeral-subject-identifier-1_0.html",
+    "title": "OpenID Connect Ephemeral Subject Identifier 1.0",
+    "revision": "1_0",
+    "stage": "Final",
+    "reason": "2026-11-20に公式本文を確認。公式仕様一覧に未掲載のため、このURLを追加監視する。"
+  }
+}
