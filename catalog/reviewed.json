@@ -66,5 +66,45 @@
     "reason": "§1・§5.1.1〜§5.1.2・§5.2.2〜§5.2.3・§6.2.1で、署名付きJWTリクエスト、ID Tokenの分離署名またはJARMによる認可応答の保護、MTLSによる送信者制約付きトークン等を定義していることを原文で確認。認証・認可に直接関連するFAPI 1.0のAdvanced仕様。",
     "reviewedAt": "2026-11-12T08:08:04Z",
     "reviewedBy": "OpenAI Codex（AI）"
+  },
+  "openid:openid-sharedsignals-framework-1_0-final": {
+    "status": "confirmed",
+    "url": "https://openid.net/specs/openid-sharedsignals-framework-1_0-final.html",
+    "rev": "1_0",
+    "sha256": "240e1567017d628d835fa61f0c1cc75f566605f3decaa26a6742c33f7ecd4f16",
+    "title": "OpenID Shared Signals Framework Specification 1.0",
+    "reason": "§2〜§4・§6〜§8で、SETによるセキュリティイベントの主体識別・JWTとの区別、配送、Transmitterメタデータと発見、受信者の権限を含むストリーム管理を定義していることを原文で確認。継続的なアクセス制御やリスク連携の基盤として認証・認可に関連する仕様。",
+    "reviewedAt": "2026-11-23T16:05:52Z",
+    "reviewedBy": "OpenAI Codex（AI）"
+  },
+  "openid:openid-caep-1_0-final": {
+    "status": "confirmed",
+    "url": "https://openid.net/specs/openid-caep-1_0-final.html",
+    "rev": "1_0",
+    "sha256": "46337de47b7433b09008395896310cb0ed356e66abb4f99b33d2a31045a75931",
+    "title": "OpenID Continuous Access Evaluation Profile 1.0",
+    "reason": "§1・§3で、セッション失効、トークンクレーム・資格情報・認証保証レベル・端末準拠状態・リスク等の変化を表す8種類のイベントを定義していることを原文で確認。認証後のセッション状態やアクセス判断に直接関連するCAEP仕様。",
+    "reviewedAt": "2026-11-23T16:05:52Z",
+    "reviewedBy": "OpenAI Codex（AI）"
+  },
+  "openid:openid-risc-1_0-final": {
+    "status": "confirmed",
+    "url": "https://openid.net/specs/openid-risc-1_0-final.html",
+    "rev": "1_0",
+    "sha256": "2ab71f4e67a348d371ab0609bf5bd9c5d8b28a041ab69117965aa96ea5f965dd",
+    "title": "OpenID RISC Profile Specification 1.0",
+    "reason": "§1〜§2で、アカウント無効化・識別子変更・資格情報侵害・復旧・Opt Out等のイベントを定義していることを原文で確認。アカウントの安全性と認証・認可判断の連携に関連するRISC仕様。§2.11のsessions-revokedは非推奨で、新規実装にはCAEPのsession-revokedを要求する。",
+    "reviewedAt": "2026-11-23T16:05:52Z",
+    "reviewedBy": "OpenAI Codex（AI）"
+  },
+  "openid:openid-caep-interoperability-profile-1_0-ID1": {
+    "status": "confirmed",
+    "url": "https://openid.net/specs/openid-caep-interoperability-profile-1_0-ID1.html",
+    "rev": "1_0",
+    "sha256": "92e4a3fcdafce87a2e37eec1c6acfc437a794bc8c8ae734dca7ec45804cf4bd2",
+    "title": "CAEP Interoperability Profile 1.0 - draft 00",
+    "reason": "§1〜§3で、SSF/CAEPの相互運用に必要な配送・署名・OAuthによるAPI保護、セッション失効・資格情報変更の要件を定義していることを原文で確認。§2.2はCAEP Implementer’s Draft 2を対象とする。このURLのImplementer’s Draftに限定した関連性の確認であり、Final版としての判定ではない。",
+    "reviewedAt": "2026-11-23T16:05:52Z",
+    "reviewedBy": "OpenAI Codex（AI）"
   }
 }
