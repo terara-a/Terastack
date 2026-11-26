@@ -218,7 +218,7 @@
     },
     "openid-4-verifiable-presentations-1_0": {
       "changedAt": "2026-11-12T03:13:32Z",
-      "checkedAt": "2026-11-21T03:21:46Z",
+      "checkedAt": "2026-11-26T04:15:38Z",
       "etag": "\"7dd49-63994268300de\"",
       "lastModified": "Thu, 10 Jul 2025 14:38:44 GMT",
       "listed": true,
@@ -230,7 +230,7 @@
     },
     "openid-attribute-exchange-1_0": {
       "changedAt": "2026-11-12T03:13:37Z",
-      "checkedAt": "2026-11-21T03:21:51Z",
+      "checkedAt": "2026-11-26T04:15:45Z",
       "etag": "\"bc4d-4408da0f7bf80\"",
       "lastModified": "Wed, 05 Dec 2007 17:49:02 GMT",
       "listed": true,
@@ -242,7 +242,7 @@
     },
     "openid-authentication-1_1": {
       "changedAt": "2026-11-13T02:45:25Z",
-      "checkedAt": "2026-11-21T03:22:01Z",
+      "checkedAt": "2026-11-26T04:15:50Z",
       "etag": "\"d7f6-43c026d591b40\"",
       "lastModified": "Mon, 08 Oct 2007 22:03:49 GMT",
       "listed": true,
@@ -254,7 +254,7 @@
     },
     "openid-authentication-2_0": {
       "changedAt": "2026-11-13T02:45:31Z",
-      "checkedAt": "2026-11-21T03:22:07Z",
+      "checkedAt": "2026-11-26T04:15:59Z",
       "etag": "\"2a5fa-4fae434226740\"",
       "lastModified": "Tue, 03 Jun 2014 01:12:21 GMT",
       "listed": true,
@@ -266,7 +266,7 @@
     },
     "openid-caep-1_0-final": {
       "changedAt": "2026-11-13T02:45:40Z",
-      "checkedAt": "2026-11-21T03:22:16Z",
+      "checkedAt": "2026-11-26T04:16:06Z",
       "etag": "\"1abcf-63d827e8b242d\"",
       "lastModified": "Fri, 29 Aug 2025 15:15:38 GMT",
       "listed": true,
@@ -278,7 +278,7 @@
     },
     "openid-caep-interoperability-profile-1_0-ID1": {
       "changedAt": "2026-11-13T02:45:50Z",
-      "checkedAt": "2026-11-21T03:22:25Z",
+      "checkedAt": "2026-11-26T04:16:13Z",
       "etag": "\"13b3d-6201a113e64d2\"",
       "lastModified": "Tue, 20 Aug 2024 09:29:50 GMT",
       "listed": true,
@@ -290,7 +290,7 @@
     },
     "openid-caep-specification-1_0": {
       "changedAt": "2026-11-13T02:46:00Z",
-      "checkedAt": "2026-11-21T03:22:31Z",
+      "checkedAt": "2026-11-26T04:16:22Z",
       "etag": "\"ada2-5c92b246615c0\"",
       "lastModified": "Tue, 10 Aug 2021 02:20:15 GMT",
       "listed": true,
@@ -302,7 +302,7 @@
     },
     "openid-caep-specification-1_0-ID1": {
       "changedAt": "2026-11-13T02:46:09Z",
-      "checkedAt": "2026-11-21T03:22:39Z",
+      "checkedAt": "2026-11-26T04:16:31Z",
       "etag": "\"ada2-5c92b246615c0\"",
       "lastModified": "Tue, 10 Aug 2021 02:20:15 GMT",
       "listed": true,
@@ -314,7 +314,7 @@
     },
     "openid-client-initiated-backchannel-authentication-core-1_0": {
       "changedAt": "2026-11-13T02:46:17Z",
-      "checkedAt": "2026-11-22T02:28:18Z",
+      "checkedAt": "2026-11-26T04:16:46Z",
       "etag": "\"1b12d-5caf39dbfa700\"",
       "lastModified": "Wed, 01 Sep 2021 18:55:56 GMT",
       "listed": true,
@@ -326,7 +326,7 @@
     },
     "openid-connect-4-ida-claims-1_0-final": {
       "changedAt": "2026-11-13T02:46:24Z",
-      "checkedAt": "2026-11-22T02:28:25Z",
+      "checkedAt": "2026-11-26T04:16:56Z",
       "etag": "\"12fdf-6236fe3c9ba6a\"",
       "lastModified": "Tue, 01 Oct 2024 20:08:50 GMT",
       "listed": true,
@@ -338,7 +338,7 @@
     },
     "openid-connect-4-identity-assurance-1_0": {
       "changedAt": "2026-11-13T02:46:30Z",
-      "checkedAt": "2026-11-22T02:28:31Z",
+      "checkedAt": "2026-11-26T04:17:02Z",
       "etag": "\"2c29b-6560233f327a6\"",
       "lastModified": "Tue, 07 Jul 2026 09:42:01 GMT",
       "listed": true,
@@ -350,7 +350,7 @@
     },
     "openid-connect-4-identity-assurance-1_0-ID4": {
       "changedAt": "2026-11-13T02:46:40Z",
-      "checkedAt": "2026-11-22T02:28:41Z",
+      "checkedAt": "2026-11-26T04:17:10Z",
       "etag": "\"44c1d-5e69b6dfa68c0\"",
       "lastModified": "Fri, 19 Aug 2022 17:28:43 GMT",
       "listed": true,
@@ -362,7 +362,7 @@
     },
     "openid-connect-4-identity-assurance-1_0-errata1": {
       "changedAt": "2026-11-13T02:46:49Z",
-      "checkedAt": "2026-11-22T02:28:47Z",
+      "checkedAt": "2026-11-26T04:17:19Z",
       "etag": "\"2c29b-6560233f31bee\"",
       "lastModified": "Tue, 07 Jul 2026 09:42:01 GMT",
       "listed": true,
@@ -374,7 +374,7 @@
     },
     "openid-connect-4-identity-assurance-1_0-final": {
       "changedAt": "2026-11-13T02:46:56Z",
-      "checkedAt": "2026-11-22T02:28:57Z",
+      "checkedAt": "2026-11-26T04:17:25Z",
       "etag": "\"2b3db-6236fe6cab0ee\"",
       "lastModified": "Tue, 01 Oct 2024 20:09:40 GMT",
       "listed": true,
@@ -386,7 +386,7 @@
     },
     "openid-connect-account-porting-1_0": {
       "changedAt": "2026-11-13T02:47:02Z",
-      "checkedAt": "2026-11-22T02:29:07Z",
+      "checkedAt": "2026-11-26T04:17:34Z",
       "etag": "\"ebd0-54a1aac8bc700\"",
       "lastModified": "Tue, 07 Mar 2017 02:21:48 GMT",
       "listed": true,
@@ -398,7 +398,7 @@
     },
     "openid-connect-account-porting-1_0-ID1": {
       "changedAt": "2026-11-13T02:47:11Z",
-      "checkedAt": "2026-11-22T02:29:17Z",
+      "checkedAt": "2026-11-26T04:17:42Z",
       "etag": "\"ebd0-54a1aac8bc700\"",
       "lastModified": "Tue, 07 Mar 2017 02:21:48 GMT",
       "listed": true,
@@ -410,7 +410,7 @@
     },
     "openid-connect-backchannel-1_0": {
       "changedAt": "2026-11-13T02:47:18Z",
-      "checkedAt": "2026-11-22T02:29:23Z",
+      "checkedAt": "2026-11-26T04:17:48Z",
       "etag": "\"ff80-60c9a302cc040\"",
       "lastModified": "Sat, 16 Dec 2023 05:57:13 GMT",
       "listed": true,
@@ -422,7 +422,7 @@
     },
     "openid-connect-core-1_0": {
       "changedAt": "2026-11-13T02:47:25Z",
-      "checkedAt": "2026-11-22T02:29:32Z",
+      "checkedAt": "2026-11-26T04:17:56Z",
       "etag": "\"6ad04-60c9a2f5720c0\"",
       "lastModified": "Sat, 16 Dec 2023 05:56:59 GMT",
       "listed": true,
@@ -434,7 +434,7 @@
     },
     "openid-connect-discovery-1_0": {
       "changedAt": "2026-11-13T02:47:32Z",
-      "checkedAt": "2026-11-22T02:29:38Z",
+      "checkedAt": "2026-11-26T04:18:01Z",
       "etag": "\"1aa38-60c9a2fa36c00\"",
       "lastModified": "Sat, 16 Dec 2023 05:57:04 GMT",
       "listed": true,
@@ -458,7 +458,7 @@
     },
     "openid-connect-ephemeral-subject-identifier-1_0": {
       "changedAt": "2026-11-22T02:28:12Z",
-      "checkedAt": "2026-11-22T02:28:12Z",
+      "checkedAt": "2026-11-26T04:16:40Z",
       "discovery": "additional",
       "etag": "\"ceee-65d329c5a638e\"",
       "lastModified": "Tue, 06 Oct 2026 21:23:33 GMT",
@@ -1058,7 +1058,7 @@
       "url": "https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0-final.html"
     }
   },
-  "lastSuccess": "2026-11-25T05:01:11Z",
+  "lastSuccess": "2026-11-26T04:18:01Z",
   "listing": {},
   "listingParserVersion": 2,
   "version": 1
